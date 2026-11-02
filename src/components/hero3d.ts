@@ -78,7 +78,7 @@ export function mountHero3D(host: HTMLElement, trigger: HTMLElement): () => void
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    const s = w < 640 ? 0.62 : w < 1024 ? 0.82 : 1;
+    const s = w < 640 ? 0.48 : w < 1024 ? 0.78 : 1;
     bell.scale.setScalar(s);
   };
   resize();

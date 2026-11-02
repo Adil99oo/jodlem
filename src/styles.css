@@ -63,7 +63,7 @@
 
   /* spacing + type scale */
   --space-section: clamp(5rem, 10vw, 9rem);
-  --text-display: clamp(4.5rem, 19vw, 19rem);
+  --text-display: clamp(6.5rem, 19vw, 19rem);
   --text-h2: clamp(2.25rem, 5.5vw, 4.5rem);
   --text-h3: clamp(1.25rem, 2vw, 1.5rem);
   --text-body: clamp(1rem, 1.1vw, 1.125rem);

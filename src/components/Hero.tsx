@@ -26,7 +26,7 @@ export function Hero() {
     <section ref={section} id="top" className="relative flex min-h-svh flex-col overflow-hidden bg-background">
       <h1 className="display pointer-events-none absolute inset-x-0 top-1/2 z-0 -translate-y-[60%] text-center" aria-label={site.hero.headline.join(" ")}>
         {site.hero.headline.map((w, i) => (
-          <span key={w} className="word mx-[0.04em]" aria-hidden="true">
+          <span key={w} className="word block sm:mx-[0.04em] sm:inline-block" aria-hidden="true">
             <span style={{ animationDelay: `${0.15 + i * 0.14}s` }}>{w}</span>
           </span>
         ))}
