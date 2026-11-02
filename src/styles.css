@@ -71,7 +71,7 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; overflow-x: hidden; }
+  html { scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -79,6 +79,7 @@
     font-size: var(--text-body);
     line-height: 1.6;
     overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3 { line-height: 1.05; font-weight: 800; }

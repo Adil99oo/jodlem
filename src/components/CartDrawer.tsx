@@ -19,6 +19,7 @@ export function CartDrawer() {
         const f = panel.current.querySelectorAll<HTMLElement>("button:not([disabled]), a");
         if (!f.length) return;
         const first = f[0], last = f[f.length - 1];
+        if (!first || !last) return;
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
@@ -48,6 +49,7 @@ export function CartDrawer() {
             <ul className="mt-8 flex flex-1 flex-col gap-3 overflow-y-auto">
               {lines.map((l) => {
                 const item = catalog[l.id];
+                if (!item) return null;
                 return (
                   <li key={l.id} className="flex items-center justify-between gap-4 rounded-lg bg-background p-4">
                     <div>
