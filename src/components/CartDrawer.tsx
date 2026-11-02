@@ -48,6 +48,7 @@ export function CartDrawer() {
             <ul className="mt-8 flex flex-1 flex-col gap-3 overflow-y-auto">
               {lines.map((l) => {
                 const item = catalog[l.id];
+                if (!item) return null;
                 return (
                   <li key={l.id} className="flex items-center justify-between gap-4 rounded-lg bg-background p-4">
                     <div>

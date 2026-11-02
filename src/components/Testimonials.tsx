@@ -17,6 +17,7 @@ export function Testimonials() {
   }, [paused, i]);
 
   const t = items[i];
+  if (!t) return null;
   return (
     <section className="section section-surface" aria-roledescription="carousel" aria-label="What members say">
       <div

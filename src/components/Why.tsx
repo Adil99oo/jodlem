@@ -12,7 +12,7 @@ export function Why() {
         <h2 className="h2">Why JODLEM</h2>
         <div className="grid gap-10 sm:grid-cols-3">
           {site.why.map((b, i) => {
-            const Icon = icons[i % icons.length];
+            const Icon = icons[i % icons.length] ?? TrendingUp;
             return (
               <div key={b.title}>
                 <span className="grid size-14 place-items-center rounded-lg bg-accent text-accent-foreground"><Icon className="size-6" aria-hidden="true" /></span>
