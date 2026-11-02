@@ -1,0 +1,8 @@
+[
+  { "id": "prd-hex-dumbbells", "name": "Hex Dumbbell Pair", "category": "Weights", "price": 89, "detail": "Rubber-coated, 15 lb each", "image": "dumbbells" },
+  { "id": "prd-kettlebell", "name": "Cast Iron Kettlebell", "category": "Weights", "price": 64, "detail": "16 kg, powder-coated grip", "image": "kettlebell" },
+  { "id": "prd-bands", "name": "Loop Band Set", "category": "Accessories", "price": 34, "detail": "Light, medium and heavy", "image": "bands" },
+  { "id": "prd-mat", "name": "Grip Training Mat", "category": "Recovery", "price": 48, "detail": "6 mm, non-slip both sides", "image": "mat" },
+  { "id": "prd-rope", "name": "Speed Jump Rope", "category": "Accessories", "price": 22, "detail": "Ball-bearing handles, adjustable", "image": "rope" },
+  { "id": "prd-roller", "name": "Firm Foam Roller", "category": "Recovery", "price": 29, "detail": "45 cm, high-density core", "image": "roller" }
+]

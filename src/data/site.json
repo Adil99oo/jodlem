@@ -1,0 +1,20 @@
+{
+  "hero": {
+    "headline": ["Lift.", "Build.", "Last."],
+    "subline": "Training plans and honest gear for people who want to get stronger and stay that way."
+  },
+  "why": [
+    { "title": "Plans that progress", "body": "Every program adds load or volume on a schedule, so you always know what next week asks of you." },
+    { "title": "Gear we train with", "body": "Each item in the shop is used daily by our coaches before it goes on sale." },
+    { "title": "Real coaches", "body": "Questions go to a certified coach, not a bot. Most replies arrive the same day." }
+  ],
+  "testimonials": [
+    { "quote": "I followed the Strength plan for four months and my deadlift went from 80 to 120 kg. The weekly feedback kept me honest.", "name": "Priya Nair", "role": "Strength member" },
+    { "quote": "My coach rebuilt my program around a bad shoulder. I train pain-free for the first time in years.", "name": "Marcus Hale", "role": "Coached member" },
+    { "quote": "The kettlebell and bands cover almost everything I do at home. Solid quality and quick delivery.", "name": "Elena Ruiz", "role": "Shop customer" }
+  ],
+  "cta": {
+    "title": "Your first week is on us.",
+    "body": "Start any plan today and cancel within seven days at no cost."
+  }
+}

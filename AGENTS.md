@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Site copy, prices and catalog live in src/data/*.json; components only render them (keeps content editable in one place).
+- The hero 3D scene is plain three.js in src/components/hero3d.ts, dynamically imported after hydration (keeps three.js out of SSR).
+- Contact and newsletter forms insert directly from the browser into insert-only tables (contact_submissions, newsletter_signups); anon cannot read them.
