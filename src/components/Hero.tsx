@@ -45,14 +45,14 @@ export function Hero() {
           </span>
         </h1>
 
-        <div className="pointer-events-none relative z-10 flex min-h-0 flex-1 items-end justify-center pt-20 md:absolute md:bottom-0 md:right-[6vw] md:block md:pt-0" aria-hidden="true">
+        <div className="pointer-events-none relative z-10 flex min-h-0 flex-1 items-end justify-center pt-20 lg:absolute lg:bottom-0 lg:right-[6vw] lg:block lg:pt-0 [@media(max-height:520px)]:absolute [@media(max-height:520px)]:bottom-0 [@media(max-height:520px)]:right-[4vw] [@media(max-height:520px)]:block" aria-hidden="true">
           <img
             ref={imgRef}
             src={athleteImg}
             alt=""
             width={1024}
             height={1536}
-            className="h-full max-h-[70svh] max-w-[92vw] sm:max-h-[64svh] w-auto lg:h-[88svh] lg:max-h-none [@media(max-height:520px)]:h-[92svh] object-contain object-bottom will-change-transform"
+            className="h-full max-h-[70svh] max-w-[92vw] sm:max-h-[64svh] w-auto lg:h-[88svh] lg:max-h-none [@media(max-height:520px)]:h-[88svh] [@media(max-height:520px)]:max-h-none object-contain object-bottom will-change-transform"
           />
         </div>
 
