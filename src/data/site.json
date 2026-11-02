@@ -1,7 +1,8 @@
 {
   "hero": {
-    "headline": ["Lift.", "Build.", "Last."],
-    "subline": "Training plans and honest gear for people who want to get stronger and stay that way."
+    "name": "JODLEM",
+    "punchline": "You are in good hands.",
+    "subline": "Real coaches, tested gear and plans that progress — everything you need to get stronger and stay that way."
   },
   "why": [
     { "title": "Plans that progress", "body": "Every program adds load or volume on a schedule, so you always know what next week asks of you." },
