@@ -85,7 +85,7 @@
 @media (max-height: 520px) {
   .hero-sub { display: none; }
   .hero-punch { font-size: 1.25rem; }
-  .hero-copy { padding-top: 5rem; padding-bottom: 1rem; }
+  .hero-copy { padding-top: 5rem; padding-bottom: 1rem; margin-top: auto; background: transparent; }
 }
 
 @layer base {
