@@ -56,7 +56,7 @@ export function Hero() {
           />
         </div>
 
-        <div ref={copyRef} className="container-x relative z-20 mt-auto grid gap-8 pb-10 pt-32 md:grid-cols-[1fr_auto] md:items-end md:pb-14">
+        <div ref={copyRef} className="container-x relative z-20 mt-auto grid gap-8 pb-10 pt-32 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)] md:grid-cols-[1fr_auto] md:items-end md:pb-14">
           <div className="max-w-md">
             <p className="text-2xl font-black uppercase leading-tight md:text-3xl">{site.hero.punchline}</p>
             <p className="mt-3 text-lg text-muted-foreground md:text-xl">{site.hero.subline}</p>
