@@ -30,7 +30,7 @@ export function CartDrawer() {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50">
-      <button className="absolute inset-0 h-full w-full cursor-default bg-background/80" aria-label="Close cart" tabIndex={-1} onClick={() => setOpen(false)} />
+      <button className="absolute inset-0 h-full w-full cursor-default bg-background" aria-label="Close cart" tabIndex={-1} onClick={() => setOpen(false)} />
       <div ref={panel} role="dialog" aria-modal="true" aria-label="Your cart"
         className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-surface p-6 animate-in slide-in-from-right duration-300 md:p-8">
         <div className="flex items-center justify-between">
