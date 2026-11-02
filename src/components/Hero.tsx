@@ -36,7 +36,7 @@ export function Hero() {
       <section id="top" className="sticky top-0 flex h-svh flex-col overflow-hidden bg-background">
         <h1
           ref={nameRef}
-          className="display pointer-events-none absolute inset-x-0 top-[46%] z-0 -translate-y-1/2 text-center text-foreground text-[clamp(7rem,23vw,23rem)] will-change-transform md:top-[38%]"
+          className="display pointer-events-none absolute inset-x-0 top-[46%] z-0 -translate-y-1/2 text-center text-foreground text-[clamp(4.5rem,23vw,23rem)] will-change-transform md:top-[38%]"
           style={{ opacity: 0.22 }}
           aria-label={site.hero.name}
         >
@@ -52,14 +52,14 @@ export function Hero() {
             alt=""
             width={1024}
             height={1536}
-            className="h-[72svh] w-auto object-contain object-bottom will-change-transform md:h-[88svh]"
+            className="h-[62svh] max-w-[92vw] w-auto sm:h-[72svh] [@media(max-height:520px)]:h-[92svh] object-contain object-bottom will-change-transform md:h-[88svh]"
           />
         </div>
 
-        <div ref={copyRef} className="container-x relative z-20 mt-auto grid gap-8 pb-10 pt-32 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)] md:grid-cols-[1fr_auto] md:items-end md:pb-14">
+        <div ref={copyRef} className="hero-copy container-x relative z-20 mt-auto grid gap-8 pb-10 pt-32 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)] md:grid-cols-[1fr_auto] md:items-end md:pb-14">
           <div className="max-w-md">
-            <p className="text-2xl font-black uppercase leading-tight md:text-3xl">{site.hero.punchline}</p>
-            <p className="mt-3 text-lg text-muted-foreground md:text-xl">{site.hero.subline}</p>
+            <p className="hero-punch text-2xl font-black uppercase leading-tight md:text-3xl">{site.hero.punchline}</p>
+            <p className="hero-sub mt-3 text-lg text-muted-foreground md:text-xl">{site.hero.subline}</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a href="#packages" className="btn btn-primary">Start now</a>
               <a href="#shop" className="btn btn-secondary">Shop gear</a>
