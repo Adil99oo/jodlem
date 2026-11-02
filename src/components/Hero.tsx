@@ -36,7 +36,7 @@ export function Hero() {
       <section id="top" className="sticky top-0 flex h-svh flex-col overflow-hidden bg-background">
         <h1
           ref={nameRef}
-          className="display pointer-events-none absolute inset-x-0 top-[38%] z-0 -translate-y-1/2 text-center text-foreground text-[clamp(7rem,23vw,23rem)] will-change-transform"
+          className="display pointer-events-none absolute inset-x-0 top-[46%] z-0 -translate-y-1/2 text-center text-foreground text-[clamp(7rem,23vw,23rem)] will-change-transform md:top-[38%]"
           style={{ opacity: 0.22 }}
           aria-label={site.hero.name}
         >
