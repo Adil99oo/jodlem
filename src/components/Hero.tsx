@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowDown } from "lucide-react";
 import site from "@/data/site.json";
-import athleteImg from "@/assets/hero-athlete.jpg";
+import athleteImg from "@/assets/hero-athlete-cutout.png";
 
 export function Hero() {
   const section = useRef<HTMLElement>(null);
@@ -34,7 +34,7 @@ export function Hero() {
     <section ref={section} id="top" className="relative flex min-h-svh flex-col overflow-hidden bg-background">
       <h1
         ref={nameRef}
-        className="display pointer-events-none absolute inset-x-0 top-[38%] z-0 -translate-y-1/2 text-center text-foreground"
+        className="display pointer-events-none absolute inset-x-0 top-[38%] z-0 -translate-y-1/2 text-center text-foreground text-[clamp(7rem,23vw,23rem)]"
         style={{ opacity: 0.22 }}
         aria-label={site.hero.name}
       >
