@@ -69,6 +69,25 @@
   --text-body: clamp(1rem, 1.1vw, 1.125rem);
 }
 
+/* Day mode: same structure, light neutrals, deeper lime so text stays readable */
+.light {
+  --background: oklch(0.97 0 0);
+  --surface: oklch(0.91 0 0);
+  --foreground: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.42 0 0);
+  --accent: oklch(0.86 0.2 125);
+  --accent-foreground: oklch(0.16 0 0);
+  color-scheme: light;
+}
+.light .text-accent, .light .hover\:text-accent:hover { color: oklch(0.5 0.15 130); }
+
+/* Short screens (landscape phones): keep hero copy compact */
+@media (max-height: 520px) {
+  .hero-sub { display: none; }
+  .hero-punch { font-size: 1.25rem; }
+  .hero-copy { padding-top: 5rem; padding-bottom: 1rem; margin-top: auto; background: transparent; }
+}
+
 @layer base {
   * { border-color: var(--color-border); }
   html { scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }

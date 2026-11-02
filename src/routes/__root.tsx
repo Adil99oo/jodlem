@@ -96,8 +96,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("jodlem-theme")==="light")document.documentElement.classList.add("light")}catch(e){}`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
