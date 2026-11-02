@@ -10,5 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Site copy, prices and catalog live in src/data/*.json; components only render them (keeps content editable in one place).
-- The hero 3D scene is plain three.js in src/components/hero3d.ts, dynamically imported after hydration (keeps three.js out of SSR).
+- The hero is a static athlete photo (src/assets/hero-athlete.jpg) over a giant brand name in src/components/Hero.tsx, with rAF scroll parallax; no three.js anywhere in the project.
 - Contact and newsletter forms insert directly from the browser into insert-only tables (contact_submissions, newsletter_signups); anon cannot read them.
