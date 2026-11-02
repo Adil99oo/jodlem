@@ -1,0 +1,29 @@
+[
+  {
+    "id": "pkg-starter",
+    "name": "Starter",
+    "price": 29,
+    "period": "month",
+    "summary": "Three guided sessions a week to build the habit.",
+    "features": ["12-week beginner program", "Video form library", "Monthly check-in call"],
+    "highlighted": false
+  },
+  {
+    "id": "pkg-strength",
+    "name": "Strength",
+    "price": 59,
+    "period": "month",
+    "summary": "Progressive lifting plan that adjusts to your numbers.",
+    "features": ["Adaptive 4-day split", "Weekly coach feedback", "Nutrition targets", "Priority gear shipping"],
+    "highlighted": true
+  },
+  {
+    "id": "pkg-coached",
+    "name": "Coached",
+    "price": 149,
+    "period": "month",
+    "summary": "A dedicated coach who writes every session for you.",
+    "features": ["Fully custom programming", "Two video calls a month", "Daily messaging access", "Form reviews within 24 hours"],
+    "highlighted": false
+  }
+]
