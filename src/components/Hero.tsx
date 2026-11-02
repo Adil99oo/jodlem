@@ -52,11 +52,11 @@ export function Hero() {
             alt=""
             width={1024}
             height={1536}
-            className="h-full max-h-[70svh] max-w-[92vw] w-auto md:h-[88svh] md:max-h-none [@media(max-height:520px)]:h-[92svh] object-contain object-bottom will-change-transform"
+            className="h-full max-h-[70svh] max-w-[92vw] sm:max-h-[64svh] w-auto lg:h-[88svh] lg:max-h-none [@media(max-height:520px)]:h-[92svh] object-contain object-bottom will-change-transform"
           />
         </div>
 
-        <div ref={copyRef} className="hero-copy container-x relative z-20 grid shrink-0 gap-8 bg-background pb-8 pt-6 md:mt-auto md:bg-transparent md:pb-14 md:pt-32 md:grid-cols-[1fr_auto] md:items-end md:pb-14">
+        <div ref={copyRef} className="hero-copy container-x relative z-20 grid shrink-0 gap-8 bg-background pb-8 pt-6 lg:mt-auto lg:bg-transparent lg:pb-14 lg:pt-32 lg:grid-cols-[1fr_auto] lg:items-end lg:pb-14">
           <div className="max-w-md">
             <p className="hero-punch text-2xl font-black uppercase leading-tight md:text-3xl">{site.hero.punchline}</p>
             <p className="hero-sub mt-3 text-lg text-muted-foreground md:text-xl">{site.hero.subline}</p>
