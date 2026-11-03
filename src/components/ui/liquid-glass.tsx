@@ -8,6 +8,7 @@ import {
   type CSSProperties,
   type HTMLAttributes,
 } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
 export type LiquidGlassProps = HTMLAttributes<HTMLDivElement> & {
@@ -53,10 +54,15 @@ export function LiquidGlass({
     null,
   );
   const [mode, setMode] = useState<"pending" | "simple" | "opaque">("pending");
+  const [filterHost, setFilterHost] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setFilterHost(typeof document !== "undefined" ? document.body : null);
+  }, []);
 
   useEffect(() => {
     if (prefersReducedTransparency()) setMode("opaque");
-    else if (isSafariLike() || !supportsUrlBackdropFilter()) setMode("simple");
+    else if (shouldUseSimpleGlassFallback()) setMode("simple");
   }, []);
 
   useEffect(() => {
@@ -134,18 +140,41 @@ export function LiquidGlass({
     mode === "opaque"
       ? "none"
       : mode === "simple"
-        ? "blur(20px) saturate(1.4)"
+        ? webKitGlassBackdrop()
         : filter
           ? `url(#${filter.id}) blur(0.5px) saturate(1.85) brightness(1.02)`
-          : "blur(10px) saturate(1.6) brightness(1.04)";
+          : webKitGlassBackdrop();
+
+  const filterPortal =
+    filter && filterHost
+      ? createPortal(
+          <div
+            key={filter.id}
+            aria-hidden
+            className="pointer-events-none"
+            style={{
+              position: "fixed",
+              width: 0,
+              height: 0,
+              overflow: "hidden",
+              left: 0,
+              top: 0,
+              zIndex: -1,
+            }}
+            dangerouslySetInnerHTML={{ __html: filter.svg }}
+          />,
+          filterHost,
+        )
+      : null;
 
   return (
     <div
       ref={rootRef}
       data-refract={mode === "pending" && filter ? "true" : "false"}
+      data-glass-mode={mode}
       className={cn(
         "relative overflow-hidden",
-        mode === "simple" && "bg-white/70 dark:bg-neutral-900/60",
+        mode === "simple" && "liquid-glass-fallback bg-white/55 dark:bg-neutral-900/50",
         mode === "opaque" && "bg-white dark:bg-neutral-900",
         className,
       )}
@@ -159,14 +188,7 @@ export function LiquidGlass({
       }}
       {...rest}
     >
-      {filter ? (
-        <span
-          key={filter.id}
-          aria-hidden
-          className="pointer-events-none absolute size-0 overflow-hidden"
-          dangerouslySetInnerHTML={{ __html: filter.svg }}
-        />
-      ) : null}
+      {filterPortal}
       {contentClassName ? (
         <div className={contentClassName}>{children}</div>
       ) : (
@@ -189,10 +211,39 @@ function prefersReducedTransparency() {
   return window.matchMedia("(prefers-reduced-transparency: reduce)").matches;
 }
 
-function isSafariLike() {
+function isIosWebKit() {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent;
-  return /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+  const ios =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const webKit = /AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|OPR|Firefox/.test(ua);
+  return ios && webKit;
+}
+
+function isFirefox() {
+  if (typeof navigator === "undefined") return false;
+  return /Firefox/.test(navigator.userAgent);
+}
+
+/** Firefox lacks SVG url() backdrop; iOS WebKit tries full refract first. */
+function shouldUseSimpleGlassFallback() {
+  if (isFirefox()) return true;
+  if (typeof CSS === "undefined" || !CSS.supports) return !isIosWebKit();
+  if (supportsUrlBackdropFilter()) return false;
+  return !isIosWebKit() && !supportsWebKitBackdropBlur();
+}
+
+function supportsWebKitBackdropBlur() {
+  if (typeof CSS === "undefined" || !CSS.supports) return false;
+  return (
+    CSS.supports("backdrop-filter", "blur(1px)") ||
+    CSS.supports("-webkit-backdrop-filter", "blur(1px)")
+  );
+}
+
+function webKitGlassBackdrop() {
+  return "blur(22px) saturate(1.72) brightness(1.04) contrast(1.03)";
 }
 
 /* ---------------------------------------------------------------------------
