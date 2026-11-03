@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import site from "@/data/site.json";
 import { useReveal } from "@/lib/motion";
+import { StaggeredText } from "@/components/ui/staggered-text";
 
 export function Testimonials() {
   const ref = useReveal<HTMLDivElement>();
@@ -28,7 +29,15 @@ export function Testimonials() {
         onFocus={() => setPaused(true)}
         onBlur={() => setPaused(false)}
       >
-        <figure key={i} className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500" aria-live="polite">
+        <StaggeredText
+          text="What members say"
+          as="h2"
+          className="h2 mb-10 max-w-xl"
+          segmentBy="words"
+          direction="top"
+          delay={50}
+        />
+        <figure key={i} className="glass max-w-4xl rounded-2xl p-6 sm:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500" aria-live="polite">
           <blockquote className="text-[length:clamp(1.6rem,3.6vw,3rem)] font-bold leading-tight">"{t.quote}"</blockquote>
           <figcaption className="mt-8">
             <span className="font-bold">{t.name}</span>

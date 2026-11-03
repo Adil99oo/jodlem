@@ -31,13 +31,19 @@ function Index() {
       <Navbar />
       <main>
         <Hero />
-        <Packages />
-        <Shop />
-        <Why />
-        <Testimonials />
-        <Contact />
+        <div className="site-content-bg">
+          <Packages />
+          <Shop />
+          <div className="site-discipline-stack">
+            <Why />
+            <Testimonials />
+            <Contact />
+          </div>
+        </div>
       </main>
-      <Footer />
+      <div className="site-content-bg">
+        <Footer />
+      </div>
       <CartDrawer />
     </CartProvider>
   );

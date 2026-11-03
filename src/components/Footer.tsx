@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { StaggeredText } from "@/components/ui/staggered-text";
 
 const emailSchema = z.string().trim().email().max(255);
 
@@ -21,12 +22,19 @@ export function Footer() {
   }
 
   return (
-    <footer className="section-surface pb-10 pt-20">
-      <div className="container-x">
+    <footer className="footer-root section-surface pb-0 pt-20">
+      <div className="container-x pb-10">
         <div className="grid gap-12 md:grid-cols-2 md:items-end">
           <div>
-            <h2 className="text-3xl font-extrabold">One email a week. Training tips and new gear.</h2>
-            <form onSubmit={onSubmit} noValidate className="mt-6 flex max-w-md flex-col gap-3 sm:flex-row">
+            <StaggeredText
+              text="One email a week. Training tips and new gear."
+              as="h2"
+              className="text-3xl font-extrabold"
+              segmentBy="words"
+              direction="top"
+              delay={45}
+            />
+            <form onSubmit={onSubmit} noValidate className="glass mt-6 flex max-w-md flex-col gap-3 rounded-xl p-4 sm:flex-row sm:items-center sm:p-3">
               <label htmlFor="nl-email" className="sr-only">Email address</label>
               <input id="nl-email" name="email" type="email" placeholder="you@email.com" className="field" />
               <button className="btn btn-primary shrink-0" disabled={state === "sending"}>{state === "sending" ? "Joining..." : "Subscribe"}</button>
@@ -44,8 +52,24 @@ export function Footer() {
             <a href="#contact" className="hover:text-accent">Contact</a>
           </nav>
         </div>
-        <p className="display mt-20 select-none text-center text-[clamp(5rem,22vw,22rem)] text-background" aria-hidden="true">JODLEM</p>
-        <p className="mt-6 text-sm text-muted-foreground">© {new Date().getFullYear()} JODLEM Fitness</p>
+      </div>
+
+      <div className="footer-brand-band">
+        <picture className="footer-brand-band__photo" aria-hidden="true">
+          <source
+            type="image/webp"
+            srcSet="/bg/footer-fists-640.webp 640w, /bg/footer-fists-768.webp 768w, /bg/footer-fists-1200.webp 1200w, /bg/footer-fists-1920.webp 1920w, /bg/footer-fists-2560.webp 2560w"
+            sizes="100vw"
+          />
+          <img src="/bg/footer-fists-1920.webp" alt="" width={1920} height={1280} decoding="async" />
+        </picture>
+        <div className="footer-brand-band__scrim" aria-hidden="true" />
+        <div className="container-x footer-brand-band__content">
+          <p className="display select-none text-center text-[clamp(5rem,22vw,22rem)] text-background" aria-hidden="true">
+            JODLEM
+          </p>
+          <p className="mt-6 pb-10 text-sm text-muted-foreground">© {new Date().getFullYear()} JODLEM Fitness</p>
+        </div>
       </div>
     </footer>
   );

@@ -14,16 +14,22 @@ export function Navbar() {
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [light, setLight] = useState(false);
+
   useEffect(() => setLight(document.documentElement.classList.contains("light")), []);
+
   const toggleTheme = () => {
     const next = !light;
     setLight(next);
     document.documentElement.classList.toggle("light", next);
-    try { localStorage.setItem("jodlem-theme", next ? "light" : "dark"); } catch { /* storage blocked */ }
+    try {
+      localStorage.setItem("jodlem-theme", next ? "light" : "dark");
+    } catch {
+      /* storage blocked */
+    }
   };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -36,47 +42,107 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [menu]);
 
-  return (
-    <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${scrolled ? "bg-background" : ""}`}>
-      <nav className="container-x flex h-18 items-center justify-between py-4" aria-label="Main">
-        <a href="#top" className="condensed text-2xl font-black uppercase">JODLEM</a>
-        <ul className="hidden items-center gap-6 md:flex lg:gap-10">
-          {links.map((l) => (
-            <li key={l.href}><a href={l.href} className="font-medium transition-colors hover:text-accent">{l.label}</a></li>
-          ))}
-        </ul>
-        <div className="flex shrink-0 items-center gap-2">
-          <button className="btn btn-secondary btn-icon" onClick={toggleTheme} aria-label={light ? "Switch to night mode" : "Switch to day mode"}>
-            {light ? <Moon className="size-5" /> : <Sun className="size-5" />}
-          </button>
-          <button className="btn btn-secondary btn-icon relative" onClick={() => setOpen(true)} aria-label={`Open cart, ${count} items`}>
-            <ShoppingBag className="size-5" />
-            {count > 0 && (
-              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">{count}</span>
-            )}
-          </button>
-          <button className="btn btn-secondary btn-icon md:hidden" onClick={() => setMenu(true)} aria-label="Open menu" aria-expanded={menu}>
-            <Menu className="size-5" />
-          </button>
-        </div>
-      </nav>
+  const closeMenu = () => setMenu(false);
 
-      {menu && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-background md:hidden" role="dialog" aria-modal="true" aria-label="Menu">
-          <div className="container-x flex items-center justify-between py-4">
-            <span className="condensed text-2xl font-black uppercase">JODLEM</span>
-            <button className="btn btn-secondary btn-icon" onClick={() => setMenu(false)} aria-label="Close menu" autoFocus>
-              <X className="size-5" />
-            </button>
-          </div>
-          <ul className="container-x flex flex-1 flex-col justify-center gap-6">
+  return (
+    <header className="nav-header safe-top">
+      <div
+        className="nav-shell"
+        data-scrolled={scrolled || undefined}
+        data-menu-open={menu || undefined}
+      >
+        <nav className="nav-bar" aria-label="Main">
+          <a href="#top" className="navbar-logo" aria-label="JODLEM home">
+            <span className="navbar-logo-text condensed font-black uppercase">JODLEM</span>
+          </a>
+
+          <ul className="nav-links hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <li key={l.href}>
-                <a href={l.href} onClick={() => setMenu(false)} className="condensed text-6xl font-black uppercase transition-colors hover:text-accent">{l.label}</a>
+                <a href={l.href} className="nav-link">
+                  {l.label}
+                </a>
               </li>
             ))}
           </ul>
+
+          <div className="nav-actions">
+            <a href="#shop" className="btn btn-secondary nav-cta nav-cta-secondary hidden lg:inline-flex">
+              Shop gear
+            </a>
+            <a href="#packages" className="btn btn-primary nav-cta hidden lg:inline-flex">
+              Start now
+            </a>
+            <button
+              type="button"
+              className="btn btn-secondary btn-icon nav-icon-btn"
+              onClick={toggleTheme}
+              aria-label={light ? "Switch to night mode" : "Switch to day mode"}
+            >
+              {light ? <Moon className="size-5" /> : <Sun className="size-5" />}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-icon nav-icon-btn relative"
+              onClick={() => setOpen(true)}
+              aria-label={`Open cart, ${count} items`}
+            >
+              <ShoppingBag className="size-5" />
+              {count > 0 && (
+                <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
+                  {count}
+                </span>
+              )}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-icon nav-icon-btn md:hidden"
+              onClick={() => setMenu((o) => !o)}
+              aria-label={menu ? "Close menu" : "Open menu"}
+              aria-expanded={menu}
+              aria-controls="nav-mobile-panel"
+            >
+              {menu ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
+        </nav>
+
+        <div
+          id="nav-mobile-panel"
+          className="nav-mobile-panel md:hidden"
+          role="region"
+          aria-label="Mobile navigation"
+          aria-hidden={!menu}
+        >
+          <div className="nav-mobile-panel-inner">
+            <ul className="flex flex-col gap-1">
+              {links.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href} onClick={closeMenu} className="nav-mobile-link">
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <a href="#shop" onClick={closeMenu} className="btn btn-secondary w-full sm:flex-1">
+                Shop gear
+              </a>
+              <a href="#packages" onClick={closeMenu} className="btn btn-primary w-full sm:flex-1">
+                Start now
+              </a>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {menu && (
+        <button
+          type="button"
+          className="nav-mobile-backdrop md:hidden"
+          aria-label="Close menu"
+          onClick={closeMenu}
+        />
       )}
     </header>
   );

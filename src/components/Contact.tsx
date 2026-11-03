@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import site from "@/data/site.json";
 import { useReveal } from "@/lib/motion";
+import { StaggeredText } from "@/components/ui/staggered-text";
 
 export const contactSchema = z.object({
   name: z.string().trim().min(1, "Please enter your name").max(100, "Keep it under 100 characters"),
@@ -51,11 +52,11 @@ export function Contact() {
     <section id="contact" className="section scroll-mt-16">
       <div ref={ref} className="reveal container-x grid gap-14 lg:grid-cols-2">
         <div>
-          <h2 className="h2">{site.cta.title}</h2>
+          <StaggeredText text={site.cta.title} as="h2" className="h2" segmentBy="words" direction="top" delay={55} />
           <p className="mt-5 max-w-md text-muted-foreground">{site.cta.body}</p>
           <a href="#packages" className="btn btn-primary mt-8">See plans</a>
         </div>
-        <div className="rounded-xl bg-surface p-6 md:p-10">
+        <div className="glass rounded-xl p-6 md:p-10">
           {status === "sent" ? (
             <div role="status" className="flex min-h-80 flex-col justify-center">
               <h3 className="text-3xl">Message received.</h3>

@@ -2,6 +2,13 @@
   "hero": {
     "name": "JODLEM",
     "punchline": "You are in good hands.",
+    "typewriterLines": [
+      "You are in good hands.",
+      "Real coaches. Real results.",
+      "Plans that progress.",
+      "Show up. Get stronger.",
+      "Gear that earns its place."
+    ],
     "subline": "Real coaches, tested gear and plans that progress — everything you need to get stronger and stay that way."
   },
   "why": [

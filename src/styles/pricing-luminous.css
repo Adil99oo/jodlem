@@ -1,0 +1,410 @@
+/* Luminous pricing — scoped to JODLEM tokens; compact layout */
+.jodlem-pricing.lp-root {
+  --lp-accent: var(--accent);
+  --lp-accent-fg: var(--accent-foreground);
+  --lp-text: var(--foreground);
+  --lp-muted: var(--muted-foreground);
+  --lp-card-border: var(--glass-border);
+  --lp-shell-bg: color-mix(in oklch, var(--background) 28%, transparent);
+  --lp-shell-featured: color-mix(in oklch, var(--background) 34%, transparent);
+  --lp-card-fill: color-mix(in oklch, var(--background) 20%, transparent);
+
+  position: relative;
+  width: 100vw;
+  max-width: none;
+  min-height: 0;
+  padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1rem, 3vw, 1.75rem);
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  isolation: isolate;
+  color: var(--lp-text);
+  background: transparent;
+  border-radius: calc(var(--radius) + 6px);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.jodlem-pricing .lp-content {
+  position: relative;
+  z-index: 10;
+  width: min(980px, 100%);
+}
+
+.jodlem-pricing .lp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+}
+
+.jodlem-pricing .lp-card-shell {
+  --card-radius: 16px;
+  position: relative;
+  min-width: 0;
+  padding: 1px;
+  overflow: visible;
+  border-radius: var(--card-radius);
+  background: var(--lp-shell-bg);
+  box-shadow: 0 12px 32px oklch(0 0 0 / 0.22);
+  animation: lp-card-reveal 780ms var(--card-delay, 0ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition: transform 340ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 340ms ease;
+}
+
+.jodlem-pricing .lp-card-shell:hover {
+  box-shadow: 0 16px 38px oklch(0 0 0 / 0.28);
+}
+
+.jodlem-pricing .lp-card-shell.is-featured {
+  background: var(--lp-shell-featured);
+  box-shadow: 0 14px 36px oklch(0 0 0 / 0.26);
+  outline: 1px solid color-mix(in oklch, var(--accent) 35%, var(--glass-border));
+}
+
+.jodlem-pricing .lp-card-shell.is-featured:hover {
+  box-shadow: 0 18px 42px oklch(0 0 0 / 0.3);
+}
+
+.jodlem-pricing .lp-card-shell .group\/card:hover {
+  box-shadow:
+    0 22px 48px oklch(0 0 0 / 0.32),
+    0 0 28px color-mix(in oklch, var(--accent) 12%, transparent);
+}
+
+.light .jodlem-pricing .lp-card-shell .group\/card:hover {
+  box-shadow: 0 20px 44px oklch(0 0 0 / 0.14);
+}
+
+.jodlem-pricing .lp-card {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  padding: 1.35rem 1.15rem 1rem;
+  overflow: hidden;
+  border-radius: calc(var(--card-radius) - 1px);
+  background: var(--lp-card-fill);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.light .jodlem-pricing.lp-root {
+  --lp-card-fill: color-mix(in oklch, var(--background) 32%, transparent);
+}
+
+.jodlem-pricing .lp-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, oklch(1 0 0 / 0.03), transparent 40%);
+}
+
+.jodlem-pricing .lp-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px var(--glass-highlight);
+}
+
+.jodlem-pricing .lp-popular-label {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  height: 22px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--lp-text);
+  border: 1px solid var(--lp-card-border);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--accent) 8%, transparent);
+  backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.jodlem-pricing .lp-popular-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.jodlem-pricing .lp-plan-name {
+  margin: 0;
+  color: color-mix(in oklch, var(--accent) 88%, var(--foreground));
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.light .jodlem-pricing .lp-plan-name {
+  color: oklch(0.45 0.14 130);
+}
+
+.jodlem-pricing .lp-price-row {
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.jodlem-pricing .lp-price {
+  font-size: clamp(1.65rem, 2.2vw, 2rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.jodlem-pricing .lp-month {
+  padding-bottom: 2px;
+  color: var(--lp-muted);
+  font-size: 0.6875rem;
+}
+
+.jodlem-pricing .lp-plan-description {
+  margin: 0.75rem 0 0;
+  color: color-mix(in oklch, var(--lp-text) 82%, var(--lp-muted));
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.jodlem-pricing .lp-choose-button {
+  position: relative;
+  width: 100%;
+  min-height: 2.5rem;
+  margin-top: 1rem;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+  color: var(--lp-text);
+  border: 1px solid var(--lp-card-border);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklch, var(--background) 22%, transparent);
+  backdrop-filter: blur(12px) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(12px) saturate(var(--glass-saturate));
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: transform 260ms ease, border-color 260ms ease, background 260ms ease, box-shadow 260ms ease;
+}
+
+.jodlem-pricing .lp-choose-button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.jodlem-pricing .lp-choose-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 18%, oklch(1 0 0 / 0.1) 48%, transparent 75%);
+  transform: translateX(-130%);
+  transition: transform 600ms ease;
+}
+
+.jodlem-pricing .lp-choose-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+.jodlem-pricing .lp-choose-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+  background: color-mix(in oklch, var(--accent) 12%, transparent);
+}
+
+.jodlem-pricing .lp-choose-button:hover:not(:disabled)::before {
+  transform: translateX(130%);
+}
+
+.jodlem-pricing .lp-choose-button.is-featured {
+  color: var(--lp-accent-fg);
+  border-color: color-mix(in oklch, var(--accent) 55%, transparent);
+  background: var(--accent);
+  box-shadow: 0 6px 16px oklch(0 0 0 / 0.22);
+}
+
+.jodlem-pricing .lp-arrow-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 220ms ease;
+}
+
+.jodlem-pricing .lp-choose-button:hover:not(:disabled) .lp-arrow-icon {
+  transform: translateX(3px);
+}
+
+.jodlem-pricing .lp-divider {
+  height: 1px;
+  margin: 1rem -1.15rem 0;
+  background: linear-gradient(90deg, transparent, var(--glass-border) 18%, var(--glass-border) 82%, transparent);
+}
+
+.jodlem-pricing .lp-details {
+  padding-top: 0.85rem;
+}
+
+.jodlem-pricing .lp-details-title {
+  margin: 0 0 0.75rem;
+  color: var(--lp-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.jodlem-pricing .lp-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.jodlem-pricing .lp-metric {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--lp-muted);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+}
+
+.jodlem-pricing .lp-metric strong {
+  color: var(--lp-text);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-align: right;
+  max-width: 58%;
+}
+
+.jodlem-pricing .lp-extra-metrics {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 320ms ease, opacity 280ms ease, margin-top 320ms ease;
+}
+
+.jodlem-pricing .lp-extra-metrics.is-visible {
+  grid-template-rows: 1fr;
+  margin-top: 0.65rem;
+  opacity: 1;
+}
+
+.jodlem-pricing .lp-extra-inner {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow: hidden;
+}
+
+.jodlem-pricing .lp-view-more {
+  width: 100%;
+  margin-top: 0.65rem;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: color-mix(in oklch, var(--lp-text) 88%, transparent);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.jodlem-pricing .lp-view-more:hover {
+  color: var(--accent);
+}
+
+.jodlem-pricing .lp-chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 220ms ease;
+}
+
+.jodlem-pricing .lp-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+@keyframes lp-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 960px) {
+  .jodlem-pricing .lp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .jodlem-pricing .lp-card-shell.is-featured:hover {
+    box-shadow: 0 14px 36px oklch(0 0 0 / 0.26);
+  }
+
+  .jodlem-pricing .lp-card-shell:last-child {
+    grid-column: 1 / -1;
+    width: min(380px, 100%);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .jodlem-pricing.lp-root {
+    padding: 1.35rem 0.85rem 1.5rem;
+  }
+
+  .jodlem-pricing .lp-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .jodlem-pricing .lp-card-shell,
+  .jodlem-pricing .lp-card-shell:last-child {
+    width: min(360px, 100%);
+    grid-column: auto;
+    justify-self: center;
+  }
+
+}
+
+@media (max-width: 420px) {
+  .jodlem-pricing .lp-popular-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jodlem-pricing .lp-card-shell {
+    animation: none !important;
+  }
+
+  .jodlem-pricing .lp-card-shell,
+  .jodlem-pricing .lp-card-shell.is-featured {
+    transform: none;
+  }
+}
