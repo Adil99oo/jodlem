@@ -12,4 +12,12 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Pin Vercel output on Vercel CI only (Lovable/sandbox keeps cloudflare-module). No extra nitro() plugin.
+  nitro: process.env.VERCEL ? { preset: "vercel" } : {},
+  vite: {
+    ssr: {
+      // Supabase packages import tslib; bundle it so Vercel functions never hit ERR_MODULE_NOT_FOUND.
+      noExternal: ["tslib"],
+    },
+  },
 });
