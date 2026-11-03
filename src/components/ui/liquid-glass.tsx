@@ -62,7 +62,8 @@ export function LiquidGlass({
 
   useEffect(() => {
     if (prefersReducedTransparency()) setMode("opaque");
-    else if (shouldUseSimpleGlassFallback()) setMode("simple");
+    else if (isFirefox() || isIosWebKit()) setMode("simple");
+    else if (!supportsUrlBackdropFilter() && !supportsWebKitBackdropBlur()) setMode("simple");
   }, []);
 
   useEffect(() => {
@@ -139,7 +140,7 @@ export function LiquidGlass({
   const backdrop =
     mode === "opaque"
       ? "none"
-      : mode === "simple"
+      : mode === "simple" || isIosWebKit()
         ? webKitGlassBackdrop()
         : filter
           ? `url(#${filter.id}) blur(0.5px) saturate(1.85) brightness(1.02)`
@@ -174,7 +175,7 @@ export function LiquidGlass({
       data-glass-mode={mode}
       className={cn(
         "relative overflow-hidden",
-        mode === "simple" && "liquid-glass-fallback bg-white/55 dark:bg-neutral-900/50",
+        mode === "simple" && "liquid-glass-fallback",
         mode === "opaque" && "bg-white dark:bg-neutral-900",
         className,
       )}
@@ -184,6 +185,7 @@ export function LiquidGlass({
           mode === "pending" ? `rgb(255 255 255 / ${tint})` : undefined,
         backdropFilter: backdrop,
         WebkitBackdropFilter: backdrop,
+        ...(mode === "simple" ? { transform: "translateZ(0)" } : undefined),
         ...style,
       }}
       {...rest}
@@ -226,14 +228,6 @@ function isFirefox() {
   return /Firefox/.test(navigator.userAgent);
 }
 
-/** Firefox lacks SVG url() backdrop; iOS WebKit tries full refract first. */
-function shouldUseSimpleGlassFallback() {
-  if (isFirefox()) return true;
-  if (typeof CSS === "undefined" || !CSS.supports) return !isIosWebKit();
-  if (supportsUrlBackdropFilter()) return false;
-  return !isIosWebKit() && !supportsWebKitBackdropBlur();
-}
-
 function supportsWebKitBackdropBlur() {
   if (typeof CSS === "undefined" || !CSS.supports) return false;
   return (
@@ -243,7 +237,7 @@ function supportsWebKitBackdropBlur() {
 }
 
 function webKitGlassBackdrop() {
-  return "blur(22px) saturate(1.72) brightness(1.04) contrast(1.03)";
+  return "blur(24px) saturate(1.82) brightness(1.06) contrast(1.02)";
 }
 
 /* ---------------------------------------------------------------------------

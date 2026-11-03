@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import VectorWordmark from "@/components/ui/vector-wordmark";
 
 const REF_WIDTH = 1200;
-/** Visible wordmark size vs fitted max (hero name behind athlete). */
-const WORDMARK_DISPLAY_SCALE = 1.3;
+/** Visible wordmark scale vs fit-to-box baseline (hero brief: 1.3×). */
+const HERO_WORDMARK_SIZE_SCALE = 1.3;
 function horizontalInset(viewportWidth: number) {
   if (viewportWidth < 640) return 18;
   if (viewportWidth < 1024) return 18;
@@ -69,8 +69,8 @@ function fitFontSpecSize(
     if (w > availW || h > availH) hi = spec;
     else lo = spec;
   }
-  const margin = hostWidth < 640 ? 0.92 : 0.96;
-  return Math.floor(lo * margin * WORDMARK_DISPLAY_SCALE);
+  const margin = hostWidth < 640 ? 0.94 : 0.98;
+  return Math.floor(lo * margin * HERO_WORDMARK_SIZE_SCALE);
 }
 
 type HeroVectorWordmarkProps = {

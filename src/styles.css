@@ -172,37 +172,15 @@
   inset-inline: 0;
   top: clamp(12%, 16vh, 20%);
   width: 100%;
-  height: clamp(44vh, 52vw, 58vh);
+  height: clamp(57.2vh, 67.6vw, 75.4vh);
   padding-inline: clamp(0.85rem, 3.5vw, 2rem);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
   pointer-events: none;
   will-change: opacity;
-}
-
-.hero-wordmark-fill {
-  transform: translateZ(0);
-}
-
-/* iOS / fallback liquid glass — rim + depth when SVG url() backdrop is unavailable */
-.liquid-glass-fallback {
-  -webkit-backdrop-filter: blur(22px) saturate(1.72) brightness(1.04);
-  backdrop-filter: blur(22px) saturate(1.72) brightness(1.04);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.45),
-    inset 0 -1px 0 oklch(0 0 0 / 0.12),
-    0 8px 32px oklch(0 0 0 / 0.12);
-}
-
-.light .liquid-glass-fallback {
-  background: color-mix(in oklch, var(--background) 62%, transparent);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.65),
-    inset 0 -1px 0 oklch(0 0 0 / 0.06),
-    0 8px 28px oklch(0 0 0 / 0.08);
 }
 
 .hero-character-stage {
@@ -280,12 +258,12 @@
 
   .hero-wordmark-layer {
     top: var(--hero-nav-offset);
-    height: clamp(6.75rem, 36vw, 11rem);
-    padding-inline: clamp(0.5rem, 2.5vw, 0.85rem);
+    height: clamp(6.825rem, 36.4vw, 11.05rem);
+    padding-inline: clamp(0.65rem, 3vw, 1rem);
   }
 
   .hero-character-stage {
-    top: calc(var(--hero-nav-offset) + clamp(6.75rem, 36vw, 11rem) + 0.35rem);
+    top: calc(var(--hero-nav-offset) + clamp(6.825rem, 36.4vw, 11.05rem) + 0.35rem);
     bottom: 0;
     justify-content: center;
   }
@@ -352,7 +330,7 @@
 
   .hero-wordmark-layer {
     top: clamp(12%, 16vh, 20%);
-    height: clamp(50vh, 55vw, 70vh);
+    height: clamp(49.4vh, 54.6vw, 70.2vh);
     pointer-events: auto;
     touch-action: manipulation;
   }
@@ -383,14 +361,14 @@
   }
 
   .hero-wordmark-layer {
-    height: clamp(47vh, 57vw, 65vh);
+    height: clamp(46.8vh, 57.2vw, 65vh);
   }
 }
 
 @media (min-width: 1024px) {
   .hero-wordmark-layer {
     top: clamp(14%, 18vh, 22%);
-    height: clamp(47vh, 49vw, 65vh);
+    height: clamp(46.8vh, 49.4vw, 65vh);
   }
 
   .hero-character-stage {
@@ -419,7 +397,7 @@
   }
 
   .hero-wordmark-layer {
-    height: clamp(3.5rem, 28vh, 5rem);
+    height: clamp(4.55rem, 36.4vh, 6.5rem);
   }
 
   .hero-character-stage {
@@ -541,6 +519,12 @@
     background: linear-gradient(145deg, oklch(1 0 0 / 0.28) 0%, transparent 50%);
   }
   .glass-accent > * { position: relative; z-index: 1; }
+
+  /* iOS / Safari: frosted path for LiquidGlass (no SVG url() backdrop) */
+  .liquid-glass-fallback {
+    background: color-mix(in oklch, var(--background) 50%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(1.82) brightness(1.06);
+  }
 
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .glass, .glass-strong, .glass-nav, .glass-overlay, .glass-accent {
