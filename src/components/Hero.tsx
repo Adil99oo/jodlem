@@ -17,9 +17,11 @@ export function Hero() {
       raf = 0;
       if (!nameRef.current || !imgRef.current || !copyRef.current) return;
       const p = Math.min(Math.max(window.scrollY / window.innerHeight, 0), 1);
+      const narrow = window.innerWidth < 640;
+      const wordBase = narrow ? 0.5 : 0.26;
       imgRef.current.style.transform = `translateY(${p * -22}%) scale(${1 - p * 0.08})`;
       imgRef.current.style.opacity = `${1 - p * 0.5}`;
-      nameRef.current.style.opacity = `${0.22 + p * 0.78}`;
+      nameRef.current.style.opacity = `${wordBase + p * (0.94 - wordBase)}`;
       copyRef.current.style.opacity = `${1 - p}`;
     };
     const onScroll = () => {
@@ -34,29 +36,31 @@ export function Hero() {
   }, []);
 
   return (
-    <div className="relative h-[190svh]">
-      <section id="top" className="hero-section sticky top-0 flex h-svh flex-col overflow-hidden bg-background">
+    <div className="relative h-[112svh] max-h-[920px] min-h-[100svh] sm:h-[118svh] sm:max-h-none lg:h-[130svh]">
+      <section id="top" className="hero-section sticky top-0 flex h-svh min-h-0 flex-col overflow-hidden bg-background">
         <h1 className="sr-only">{site.hero.name}</h1>
 
-        <div ref={nameRef} className="hero-wordmark-layer" style={{ opacity: 0.22 }} aria-hidden="true">
-          <HeroVectorWordmark text={site.hero.name} />
-        </div>
+        <div className="hero-visual">
+          <div ref={nameRef} className="hero-wordmark-layer" style={{ opacity: 0.5 }} aria-hidden="true">
+            <HeroVectorWordmark text={site.hero.name} />
+          </div>
 
-        <div className="hero-character-stage">
-          <img
-            ref={imgRef}
-            src={athleteImg}
-            alt=""
-            width={1024}
-            height={1536}
-            className="hero-athlete-layer"
-          />
-          <div className="hero-ground-line" aria-hidden="true" />
+          <div className="hero-character-stage">
+            <img
+              ref={imgRef}
+              src={athleteImg}
+              alt=""
+              width={1024}
+              height={1536}
+              className="hero-athlete-layer"
+            />
+            <div className="hero-ground-line" aria-hidden="true" />
+          </div>
         </div>
 
         <div
           ref={copyRef}
-          className="hero-copy container-x relative z-20 grid shrink-0 gap-8 bg-background pb-8 pt-6 lg:mt-auto lg:bg-transparent lg:pb-14 lg:pt-32 lg:grid-cols-[1fr_auto] lg:items-end lg:pb-14"
+          className="hero-copy container-x relative z-30 mt-auto grid shrink-0 gap-8 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 md:grid-cols-[1fr_auto] md:items-end md:gap-6"
         >
           <div className="max-w-md">
             <HeroTypewriter lines={site.hero.typewriterLines ?? [site.hero.punchline]} />

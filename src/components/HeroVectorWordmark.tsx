@@ -4,7 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import VectorWordmark from "@/components/ui/vector-wordmark";
 
 const REF_WIDTH = 1200;
-const HORIZONTAL_INSET = 28;
+function horizontalInset(viewportWidth: number) {
+  if (viewportWidth < 640) return 18;
+  if (viewportWidth < 1024) return 18;
+  return 28;
+}
 
 function readThemeRgb(cssVar: string, fallback: string) {
   if (typeof document === "undefined") return fallback;
@@ -43,22 +47,28 @@ function measureWordWidth(
 /** fontSpec.size at REF_WIDTH so the baked word fits `availCssPx` at current host width */
 function fitFontSpecSize(
   hostWidth: number,
+  hostHeight: number,
   text: string,
   letterSpacing: string,
   family: string,
   weight: number,
 ): number {
-  const avail = Math.max(120, hostWidth - HORIZONTAL_INSET * 2);
+  const inset = horizontalInset(hostWidth);
+  const widthFill = hostWidth < 640 ? 0.9 : 0.96;
+  const availW = Math.max(120, (hostWidth - inset * 2) * widthFill);
+  const availH = Math.max(72, hostHeight * 0.88);
   let lo = 60;
-  let hi = 520;
-  for (let i = 0; i < 14; i += 1) {
+  let hi = 640;
+  for (let i = 0; i < 16; i += 1) {
     const spec = (lo + hi) / 2;
     const drawPx = spec * (hostWidth / REF_WIDTH);
     const w = measureWordWidth(text, drawPx, letterSpacing, family, weight);
-    if (w > avail) hi = spec;
+    const h = drawPx * 1.06;
+    if (w > availW || h > availH) hi = spec;
     else lo = spec;
   }
-  return Math.floor(lo);
+  const margin = hostWidth < 640 ? 0.94 : 0.98;
+  return Math.floor(lo * margin);
 }
 
 type HeroVectorWordmarkProps = {
@@ -92,8 +102,11 @@ export function HeroVectorWordmark({ text, className, style }: HeroVectorWordmar
       const host = hostWrapRef.current?.parentElement;
       if (!host) return;
       const w = host.clientWidth;
-      if (w < 1) return;
-      setFontSizePx(fitFontSpecSize(w, text.trim(), letterSpacing, fontFamily, fontWeight));
+      const h = host.clientHeight;
+      if (w < 1 || h < 1) return;
+      setFontSizePx(
+        fitFontSpecSize(w, h, text.trim(), letterSpacing, fontFamily, fontWeight),
+      );
     };
 
     fit();
@@ -112,7 +125,10 @@ export function HeroVectorWordmark({ text, className, style }: HeroVectorWordmar
       const fg = readThemeRgb("--foreground", "rgb(247, 247, 247)");
       const muted = readThemeRgb("--muted-foreground", "rgb(120, 120, 120)");
       const acc = readThemeRgb("--accent", "rgb(196, 255, 69)");
-      const accent = acc.startsWith("rgba") ? acc : acc.replace(/^rgb\(/, "rgba(").replace(/\)$/, ", 0.38)");
+      const accentAlpha = window.innerWidth < 640 ? 0.52 : 0.38;
+      const accent = acc.startsWith("rgba")
+        ? acc
+        : acc.replace(/^rgb\(/, "rgba(").replace(/\)$/, `, ${accentAlpha})`);
       setColors({ text: fg, shade: muted, accent });
     };
     sync();
@@ -133,7 +149,7 @@ export function HeroVectorWordmark({ text, className, style }: HeroVectorWordmar
     const onMotion = () => setReduced(mq.matches);
     onMotion();
     mq.addEventListener("change", onMotion);
-    const onResize = () => setReach(window.innerWidth < 640 ? 220 : 290);
+    const onResize = () => setReach(window.innerWidth < 640 ? 260 : 290);
     onResize();
     window.addEventListener("resize", onResize);
     return () => {

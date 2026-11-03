@@ -72,7 +72,7 @@ export function HeroTypewriter({ lines, className }: HeroTypewriterProps) {
   return (
     <p
       className={cn(
-        "hero-punch hero-typewriter text-2xl font-black uppercase leading-tight text-foreground md:text-3xl",
+        "hero-punch hero-typewriter text-[clamp(1.05rem,4.2vw,1.35rem)] font-black uppercase leading-snug text-foreground sm:text-2xl md:text-3xl",
         className,
       )}
     >
