@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import site from "@/data/site.json";
 import { useReveal } from "@/lib/motion";
+import { SiteGlassShell } from "@/components/ui/site-glass-shell";
 import { StaggeredText } from "@/components/ui/staggered-text";
 
 export const contactSchema = z.object({
@@ -56,7 +57,7 @@ export function Contact() {
           <p className="mt-5 max-w-md text-muted-foreground">{site.cta.body}</p>
           <a href="#packages" className="btn btn-primary mt-8">See plans</a>
         </div>
-        <div className="glass rounded-xl p-6 md:p-10">
+        <SiteGlassShell variant="card" className="rounded-xl" contentClassName="p-6 md:p-10">
           {status === "sent" ? (
             <div role="status" className="flex min-h-80 flex-col justify-center">
               <h3 className="text-3xl">Message received.</h3>
@@ -75,7 +76,7 @@ export function Contact() {
               </button>
             </form>
           )}
-        </div>
+        </SiteGlassShell>
       </div>
     </section>
   );

@@ -7,7 +7,7 @@ import { t as twMerge } from "../_libs/tailwind-merge.mjs";
 import { t as useInView } from "../_libs/framer-motion+[...].mjs";
 import { t as motion } from "../_libs/motion.mjs";
 import { n as stringType, t as objectType } from "../_libs/zod.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-Cssgc4g5.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-BwAruMF-.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var packages_default = [
@@ -177,6 +177,264 @@ function useCart() {
 	return c;
 }
 var money = (n) => `$${n.toFixed(n % 1 ? 2 : 0)}`;
+function cn(...inputs) {
+	return twMerge(clsx(inputs));
+}
+/**
+* Liquid glass surface. A Snell's-law displacement map bends whatever sits
+* behind the element through an SVG filter used as `backdrop-filter`.
+* Chromium refracts; Safari, Firefox and reduced-transparency fall back to
+* frosted glass.
+*/
+function LiquidGlass({ children, className, contentClassName, radius = 999, bevelDepth = 14, scale = 48, aberration = 4, frost = .4, tint = .12, style, ...rest }) {
+	const reactId = (0, import_react.useId)().replace(/:/g, "");
+	const rootRef = (0, import_react.useRef)(null);
+	const blobRef = (0, import_react.useRef)(null);
+	const [size, setSize] = (0, import_react.useState)({
+		w: 0,
+		h: 0
+	});
+	const [filter, setFilter] = (0, import_react.useState)(null);
+	const [mode, setMode] = (0, import_react.useState)("pending");
+	(0, import_react.useEffect)(() => {
+		if (prefersReducedTransparency()) setMode("opaque");
+		else if (isSafariLike() || !supportsUrlBackdropFilter()) setMode("simple");
+	}, []);
+	(0, import_react.useEffect)(() => {
+		const el = rootRef.current;
+		if (!el || mode !== "pending") return;
+		const ro = new ResizeObserver(([entry]) => {
+			if (!entry) return;
+			const box = entry.borderBoxSize?.[0];
+			const width = box?.inlineSize ?? entry.contentRect.width;
+			const height = box?.blockSize ?? entry.contentRect.height;
+			setSize({
+				w: Math.max(1, Math.round(width)),
+				h: Math.max(1, Math.round(height))
+			});
+		});
+		ro.observe(el);
+		return () => ro.disconnect();
+	}, [mode]);
+	(0, import_react.useEffect)(() => {
+		if (mode !== "pending" || size.w <= 1 || size.h <= 1) return;
+		let cancelled = false;
+		(async () => {
+			const mapUrl = await generateDisplacementBlobUrl({
+				width: size.w,
+				height: size.h,
+				radius: Math.min(radius, size.w / 2, size.h / 2),
+				bevelDepth: Math.min(bevelDepth, Math.min(size.w, size.h) / 2),
+				dpr: Math.min(window.devicePixelRatio || 1, 2)
+			});
+			await new Promise((resolve) => {
+				const img = new Image();
+				img.onload = img.onerror = () => resolve();
+				img.src = mapUrl;
+			});
+			if (cancelled) {
+				URL.revokeObjectURL(mapUrl);
+				return;
+			}
+			if (blobRef.current) URL.revokeObjectURL(blobRef.current);
+			blobRef.current = mapUrl;
+			const id = `lg-${reactId}-${size.w}x${size.h}-${Date.now().toString(36)}`;
+			setFilter({
+				id,
+				svg: buildFilterSvg({
+					id,
+					mapUrl,
+					width: size.w,
+					height: size.h,
+					scale,
+					aberration,
+					frost
+				})
+			});
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [
+		mode,
+		size.w,
+		size.h,
+		radius,
+		bevelDepth,
+		scale,
+		aberration,
+		frost,
+		reactId
+	]);
+	(0, import_react.useEffect)(() => () => {
+		if (blobRef.current) URL.revokeObjectURL(blobRef.current);
+	}, []);
+	const backdrop = mode === "opaque" ? "none" : mode === "simple" ? "blur(20px) saturate(1.4)" : filter ? `url(#${filter.id}) blur(0.5px) saturate(1.85) brightness(1.02)` : "blur(10px) saturate(1.6) brightness(1.04)";
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		ref: rootRef,
+		"data-refract": mode === "pending" && filter ? "true" : "false",
+		className: cn("relative overflow-hidden", mode === "simple" && "bg-white/70 dark:bg-neutral-900/60", mode === "opaque" && "bg-white dark:bg-neutral-900", className),
+		style: {
+			borderRadius: radius,
+			backgroundColor: mode === "pending" ? `rgb(255 255 255 / ${tint})` : void 0,
+			backdropFilter: backdrop,
+			WebkitBackdropFilter: backdrop,
+			...style
+		},
+		...rest,
+		children: [filter ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			"aria-hidden": true,
+			className: "pointer-events-none absolute size-0 overflow-hidden",
+			dangerouslySetInnerHTML: { __html: filter.svg }
+		}, filter.id) : null, contentClassName ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: contentClassName,
+			children
+		}) : children]
+	});
+}
+function supportsUrlBackdropFilter() {
+	if (typeof CSS === "undefined" || !CSS.supports) return false;
+	return CSS.supports("backdrop-filter", "url(#x)") || CSS.supports("-webkit-backdrop-filter", "url(#x)");
+}
+function prefersReducedTransparency() {
+	if (typeof window === "undefined" || !window.matchMedia) return false;
+	return window.matchMedia("(prefers-reduced-transparency: reduce)").matches;
+}
+function isSafariLike() {
+	if (typeof navigator === "undefined") return false;
+	const ua = navigator.userAgent;
+	return /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+}
+/** Signed distance to a rounded box centred at the origin. <0 inside. */
+function sdRoundedBox(px, py, halfW, halfH, r) {
+	const qx = Math.abs(px) - halfW + r;
+	const qy = Math.abs(py) - halfH + r;
+	return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - r;
+}
+/** Squircle-dome slope → Snell's-law bend. `x` = 0 at the rim, 1 at centre. */
+function bendFromDepth(x) {
+	const u = 1 - Math.min(1, Math.max(0, x));
+	const denom = (1 - u ** 4) ** .75;
+	if (denom < 1e-6) return 0;
+	const thetaI = Math.atan(Math.min(u ** 3 / denom, 8));
+	const sinT = Math.sin(thetaI) / 1.5;
+	if (sinT >= 1) return Math.sin(thetaI);
+	return Math.sin(thetaI - Math.asin(sinT));
+}
+/** φ(d) = ∫ bend along the distance from the rim. */
+function buildPhiTable(bevelPx) {
+	const n = Math.max(1, Math.ceil(bevelPx));
+	const phi = new Float32Array(n + 1);
+	for (let d = 1; d <= n; d++) phi[d] = phi[d - 1] + bendFromDepth(d / n);
+	return phi;
+}
+function samplePhi(phi, depth) {
+	const max = phi.length - 1;
+	if (depth <= 0) return phi[0];
+	if (depth >= max) return phi[max];
+	const i = Math.floor(depth);
+	const f = depth - i;
+	return phi[i] * (1 - f) + phi[i + 1] * f;
+}
+function computeDisplacementData(opts) {
+	const dpr = opts.dpr ?? 1;
+	const gain = opts.gain ?? 1.35;
+	const light = opts.light ?? {
+		x: -.55,
+		y: -.85
+	};
+	const lightLen = Math.hypot(light.x, light.y) || 1;
+	const lx = light.x / lightLen;
+	const ly = light.y / lightLen;
+	const W = Math.max(1, Math.round(opts.width * dpr));
+	const H = Math.max(1, Math.round(opts.height * dpr));
+	const halfW = W / 2;
+	const halfH = H / 2;
+	const r = Math.min(opts.radius * dpr, halfW, halfH);
+	const bevel = Math.max(1, opts.bevelDepth * dpr);
+	const phi = buildPhiTable(bevel);
+	const field = new Float32Array(W * H);
+	for (let y = 0; y < H; y++) {
+		const py = y - halfH + .5;
+		for (let x = 0; x < W; x++) {
+			const d = sdRoundedBox(x - halfW + .5, py, halfW, halfH, r);
+			field[y * W + x] = d > 0 ? 0 : samplePhi(phi, Math.min(bevel, -d));
+		}
+	}
+	const data = new Uint8ClampedArray(W * H * 4);
+	for (let y = 0; y < H; y++) {
+		const py = y - halfH + .5;
+		for (let x = 0; x < W; x++) {
+			const px = x - halfW + .5;
+			const i = y * W + x << 2;
+			const d = sdRoundedBox(px, py, halfW, halfH, r);
+			if (d > 0) {
+				data[i] = data[i + 1] = data[i + 2] = 128;
+				data[i + 3] = 0;
+				continue;
+			}
+			const x0 = Math.max(0, x - 1);
+			const x1 = Math.min(W - 1, x + 1);
+			const y0 = Math.max(0, y - 1);
+			const y1 = Math.min(H - 1, y + 1);
+			const dPhiX = (field[y * W + x1] - field[y * W + x0]) / (x1 - x0 || 1);
+			const dPhiY = (field[y1 * W + x] - field[y0 * W + x]) / (y1 - y0 || 1);
+			const dx = Math.max(-1, Math.min(1, dPhiX * gain));
+			const dy = Math.max(-1, Math.min(1, dPhiY * gain));
+			let specular = 0;
+			if (d >= -bevel) {
+				const gx = sdRoundedBox(px + 1, py, halfW, halfH, r) - sdRoundedBox(px - 1, py, halfW, halfH, r);
+				const gy = sdRoundedBox(px, py + 1, halfW, halfH, r) - sdRoundedBox(px, py - 1, halfW, halfH, r);
+				const len = Math.hypot(gx, gy) || 1;
+				const dot = gx / len * lx + gy / len * ly;
+				const rim = 1 - Math.min(1, -d / bevel);
+				specular = (Math.max(0, dot) + Math.max(0, -dot) * .35) * rim;
+			}
+			data[i] = 128 + dx * 127;
+			data[i + 1] = 128 + dy * 127;
+			data[i + 2] = Math.round(specular * 255);
+			data[i + 3] = 255;
+		}
+	}
+	return {
+		data,
+		width: W,
+		height: H
+	};
+}
+/** PNG blob URL for feImage (WebKit rejects data: URIs inside feImage). */
+async function generateDisplacementBlobUrl(opts) {
+	const { data, width, height } = computeDisplacementData(opts);
+	const canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	const ctx = canvas.getContext("2d");
+	if (!ctx) throw new Error("2d context unavailable");
+	ctx.putImageData(new ImageData(data, width, height), 0, 0);
+	const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+	if (!blob) throw new Error("Failed to encode displacement map");
+	return URL.createObjectURL(blob);
+}
+function buildFilterSvg({ id, mapUrl, width, height, scale, aberration, frost }) {
+	const pad = Math.ceil(scale + aberration + 4);
+	const px = pad / Math.max(1, width) * 100;
+	const py = pad / Math.max(1, height) * 100;
+	const region = `x="-${px.toFixed(3)}%" y="-${py.toFixed(3)}%" width="${(100 + 2 * px).toFixed(3)}%" height="${(100 + 2 * py).toFixed(3)}%"`;
+	const map = `<feImage href="${mapUrl}" xlink:href="${mapUrl}" x="0" y="0" width="${width}" height="${height}" result="map" preserveAspectRatio="none"/>`;
+	const displace = (s, result) => `<feDisplacementMap in="SourceGraphic" in2="map" scale="${s}" xChannelSelector="R" yChannelSelector="G" result="${result}"/>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><filter id="${id}" color-interpolation-filters="sRGB" ${region}>
+  ${map}
+  ${aberration <= 0 ? `${displace(scale, "rgb")}` : `${displace(scale + aberration, "dispR")}
+  <feColorMatrix in="dispR" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
+  ${displace(scale, "dispG")}
+  <feColorMatrix in="dispG" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
+  ${displace(Math.max(0, scale - aberration), "dispB")}
+  <feColorMatrix in="dispB" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue"/>
+  <feBlend in="red" in2="green" mode="screen" result="rg"/>
+  <feBlend in="rg" in2="blue" mode="screen" result="rgb"/>`}
+  <feGaussianBlur in="rgb" stdDeviation="${frost}"/>
+</filter></svg>`;
+}
 var links = [
 	{
 		href: "#packages",
@@ -228,101 +486,114 @@ function Navbar() {
 			className: "nav-shell",
 			"data-scrolled": scrolled || void 0,
 			"data-menu-open": menu || void 0,
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-				className: "nav-bar",
-				"aria-label": "Main",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-						href: "#top",
-						className: "navbar-logo",
-						"aria-label": "JODLEM home",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "navbar-logo-text condensed font-black uppercase",
-							children: "JODLEM"
-						})
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-						className: "nav-links hidden items-center gap-1 md:flex",
-						children: links.map((l) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: l.href,
-							className: "nav-link",
-							children: l.label
-						}) }, l.href))
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "nav-actions",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-								href: "#shop",
-								className: "btn btn-secondary nav-cta nav-cta-secondary hidden lg:inline-flex",
-								children: "Shop gear"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-								href: "#packages",
-								className: "btn btn-primary nav-cta hidden lg:inline-flex",
-								children: "Start now"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								type: "button",
-								className: "btn btn-secondary btn-icon nav-icon-btn",
-								onClick: toggleTheme,
-								"aria-label": light ? "Switch to night mode" : "Switch to day mode",
-								children: light ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Moon, { className: "size-5" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sun, { className: "size-5" })
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: "btn btn-secondary btn-icon nav-icon-btn relative",
-								onClick: () => setOpen(true),
-								"aria-label": `Open cart, ${count} items`,
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShoppingBag, { className: "size-5" }), count > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground",
-									children: count
-								})]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								type: "button",
-								className: "btn btn-secondary btn-icon nav-icon-btn md:hidden",
-								onClick: () => setMenu((o) => !o),
-								"aria-label": menu ? "Close menu" : "Open menu",
-								"aria-expanded": menu,
-								"aria-controls": "nav-mobile-panel",
-								children: menu ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { className: "size-5" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, { className: "size-5" })
+			children: [
+				scrolled || menu ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LiquidGlass, {
+					radius: menu ? 20 : 9999,
+					scale: 28,
+					aberration: 6,
+					bevelDepth: 16,
+					frost: .35,
+					tint: .06,
+					"aria-hidden": true,
+					className: "nav-liquid-glass pointer-events-none absolute inset-0 rounded-[inherit] border border-[color:var(--glass-border)] shadow-[var(--glass-shadow),inset_0_1px_0_var(--glass-highlight)]"
+				}) : null,
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
+					className: "nav-bar relative z-[2]",
+					"aria-label": "Main",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+							href: "#top",
+							className: "navbar-logo",
+							"aria-label": "JODLEM home",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "navbar-logo-text condensed font-black uppercase",
+								children: "JODLEM"
 							})
-						]
-					})
-				]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				id: "nav-mobile-panel",
-				className: "nav-mobile-panel md:hidden",
-				role: "region",
-				"aria-label": "Mobile navigation",
-				"aria-hidden": !menu,
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "nav-mobile-panel-inner",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-						className: "flex flex-col gap-1",
-						children: links.map((l) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: l.href,
-							onClick: closeMenu,
-							className: "nav-mobile-link",
-							children: l.label
-						}) }, l.href))
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "mt-4 flex flex-col gap-2 sm:flex-row",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: "#shop",
-							onClick: closeMenu,
-							className: "btn btn-secondary w-full sm:flex-1",
-							children: "Shop gear"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: "#packages",
-							onClick: closeMenu,
-							className: "btn btn-primary w-full sm:flex-1",
-							children: "Start now"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+							className: "nav-links hidden items-center gap-1 md:flex",
+							children: links.map((l) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: l.href,
+								className: "nav-link",
+								children: l.label
+							}) }, l.href))
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "nav-actions",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+									href: "#shop",
+									className: "btn btn-secondary nav-cta nav-cta-secondary hidden lg:inline-flex",
+									children: "Shop gear"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+									href: "#packages",
+									className: "btn btn-primary nav-cta hidden lg:inline-flex",
+									children: "Start now"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "btn btn-secondary btn-icon nav-icon-btn",
+									onClick: toggleTheme,
+									"aria-label": light ? "Switch to night mode" : "Switch to day mode",
+									children: light ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Moon, { className: "size-5" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sun, { className: "size-5" })
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+									type: "button",
+									className: "btn btn-secondary btn-icon nav-icon-btn relative",
+									onClick: () => setOpen(true),
+									"aria-label": `Open cart, ${count} items`,
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShoppingBag, { className: "size-5" }), count > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent text-xs font-bold text-accent-foreground",
+										children: count
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "btn btn-secondary btn-icon nav-icon-btn md:hidden",
+									onClick: () => setMenu((o) => !o),
+									"aria-label": menu ? "Close menu" : "Open menu",
+									"aria-expanded": menu,
+									"aria-controls": "nav-mobile-panel",
+									children: menu ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { className: "size-5" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, { className: "size-5" })
+								})
+							]
+						})
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					id: "nav-mobile-panel",
+					className: "nav-mobile-panel relative z-[2] md:hidden",
+					role: "region",
+					"aria-label": "Mobile navigation",
+					"aria-hidden": !menu,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "nav-mobile-panel-inner",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+							className: "flex flex-col gap-1",
+							children: links.map((l) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: l.href,
+								onClick: closeMenu,
+								className: "nav-mobile-link",
+								children: l.label
+							}) }, l.href))
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "mt-4 flex flex-col gap-2 sm:flex-row",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: "#shop",
+								onClick: closeMenu,
+								className: "btn btn-secondary w-full sm:flex-1",
+								children: "Shop gear"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+								href: "#packages",
+								onClick: closeMenu,
+								className: "btn btn-primary w-full sm:flex-1",
+								children: "Start now"
+							})]
 						})]
-					})]
+					})
 				})
-			})]
+			]
 		}), menu && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 			type: "button",
 			className: "nav-mobile-backdrop md:hidden",
@@ -381,9 +652,6 @@ var site_default = {
 	}
 };
 var hero_athlete_cutout_default = "/assets/hero-athlete-cutout-Ctn17ysN.png";
-function cn(...inputs) {
-	return twMerge(clsx(inputs));
-}
 var TYPE_MS = 52;
 var DELETE_MS = 32;
 var PAUSE_TYPED_MS = 2400;
@@ -438,7 +706,7 @@ function HeroTypewriter({ lines, className }) {
 	const liveLabel = phrases[index] ?? display;
 	if (phrases.length === 0) return null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-		className: cn("hero-punch hero-typewriter text-2xl font-black uppercase leading-tight text-foreground md:text-3xl", className),
+		className: cn("hero-punch hero-typewriter text-[clamp(1.05rem,4.2vw,1.35rem)] font-black uppercase leading-snug text-foreground sm:text-2xl md:text-3xl", className),
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 				className: "hero-typewriter__line",
@@ -1136,6 +1404,11 @@ function VectorWordmark(props) {
 	});
 }
 var REF_WIDTH = 1200;
+function horizontalInset(viewportWidth) {
+	if (viewportWidth < 640) return 18;
+	if (viewportWidth < 1024) return 18;
+	return 28;
+}
 function readThemeRgb(cssVar, fallback) {
 	if (typeof document === "undefined") return fallback;
 	const probe = document.createElement("span");
@@ -1159,16 +1432,22 @@ function measureWordWidth(text, drawFontPx, letterSpacing, family, weight) {
 	return m.width + pad;
 }
 /** fontSpec.size at REF_WIDTH so the baked word fits `availCssPx` at current host width */
-function fitFontSpecSize(hostWidth, text, letterSpacing, family, weight) {
-	const avail = Math.max(120, hostWidth - 56);
+function fitFontSpecSize(hostWidth, hostHeight, text, letterSpacing, family, weight) {
+	const inset = horizontalInset(hostWidth);
+	const widthFill = hostWidth < 640 ? .9 : .96;
+	const availW = Math.max(120, (hostWidth - inset * 2) * widthFill);
+	const availH = Math.max(72, hostHeight * .88);
 	let lo = 60;
-	let hi = 520;
-	for (let i = 0; i < 14; i += 1) {
+	let hi = 640;
+	for (let i = 0; i < 16; i += 1) {
 		const spec = (lo + hi) / 2;
-		if (measureWordWidth(text, spec * (hostWidth / REF_WIDTH), letterSpacing, family, weight) > avail) hi = spec;
+		const drawPx = spec * (hostWidth / REF_WIDTH);
+		const w = measureWordWidth(text, drawPx, letterSpacing, family, weight);
+		const h = drawPx * 1.06;
+		if (w > availW || h > availH) hi = spec;
 		else lo = spec;
 	}
-	return Math.floor(lo);
+	return Math.floor(lo * (hostWidth < 640 ? .94 : .98));
 }
 function HeroVectorWordmark({ text, className, style }) {
 	const hostWrapRef = (0, import_react.useRef)(null);
@@ -1191,8 +1470,9 @@ function HeroVectorWordmark({ text, className, style }) {
 			const host = hostWrapRef.current?.parentElement;
 			if (!host) return;
 			const w = host.clientWidth;
-			if (w < 1) return;
-			setFontSizePx(fitFontSpecSize(w, text.trim(), letterSpacing, fontFamily, fontWeight));
+			const h = host.clientHeight;
+			if (w < 1 || h < 1) return;
+			setFontSizePx(fitFontSpecSize(w, h, text.trim(), letterSpacing, fontFamily, fontWeight));
 		};
 		fit();
 		const ro = new ResizeObserver(fit);
@@ -1209,7 +1489,8 @@ function HeroVectorWordmark({ text, className, style }) {
 			const fg = readThemeRgb("--foreground", "rgb(247, 247, 247)");
 			const muted = readThemeRgb("--muted-foreground", "rgb(120, 120, 120)");
 			const acc = readThemeRgb("--accent", "rgb(196, 255, 69)");
-			const accent = acc.startsWith("rgba") ? acc : acc.replace(/^rgb\(/, "rgba(").replace(/\)$/, ", 0.38)");
+			const accentAlpha = window.innerWidth < 640 ? .52 : .38;
+			const accent = acc.startsWith("rgba") ? acc : acc.replace(/^rgb\(/, "rgba(").replace(/\)$/, `, ${accentAlpha})`);
 			setColors({
 				text: fg,
 				shade: muted,
@@ -1235,7 +1516,7 @@ function HeroVectorWordmark({ text, className, style }) {
 		const onMotion = () => setReduced(mq.matches);
 		onMotion();
 		mq.addEventListener("change", onMotion);
-		const onResize = () => setReach(window.innerWidth < 640 ? 220 : 290);
+		const onResize = () => setReach(window.innerWidth < 640 ? 260 : 290);
 		onResize();
 		window.addEventListener("resize", onResize);
 		return () => {
@@ -1408,9 +1689,10 @@ function Hero() {
 			raf = 0;
 			if (!nameRef.current || !imgRef.current || !copyRef.current) return;
 			const p = Math.min(Math.max(window.scrollY / window.innerHeight, 0), 1);
+			const wordBase = window.innerWidth < 640 ? .5 : .26;
 			imgRef.current.style.transform = `translateY(${p * -22}%) scale(${1 - p * .08})`;
 			imgRef.current.style.opacity = `${1 - p * .5}`;
-			nameRef.current.style.opacity = `${.22 + p * .78}`;
+			nameRef.current.style.opacity = `${wordBase + p * (.94 - wordBase)}`;
 			copyRef.current.style.opacity = `${1 - p}`;
 		};
 		const onScroll = () => {
@@ -1424,39 +1706,41 @@ function Hero() {
 		};
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "relative h-[190svh]",
+		className: "relative h-[112svh] max-h-[920px] min-h-[100svh] sm:h-[118svh] sm:max-h-none lg:h-[130svh]",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 			id: "top",
-			className: "hero-section sticky top-0 flex h-svh flex-col overflow-hidden bg-background",
+			className: "hero-section sticky top-0 flex h-svh min-h-0 flex-col overflow-hidden bg-background",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
 					className: "sr-only",
 					children: site_default.hero.name
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					ref: nameRef,
-					className: "hero-wordmark-layer",
-					style: { opacity: .22 },
-					"aria-hidden": "true",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HeroVectorWordmark, { text: site_default.hero.name })
-				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "hero-character-stage",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-						ref: imgRef,
-						src: hero_athlete_cutout_default,
-						alt: "",
-						width: 1024,
-						height: 1536,
-						className: "hero-athlete-layer"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "hero-ground-line",
-						"aria-hidden": "true"
+					className: "hero-visual",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						ref: nameRef,
+						className: "hero-wordmark-layer",
+						style: { opacity: .5 },
+						"aria-hidden": "true",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HeroVectorWordmark, { text: site_default.hero.name })
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "hero-character-stage",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+							ref: imgRef,
+							src: hero_athlete_cutout_default,
+							alt: "",
+							width: 1024,
+							height: 1536,
+							className: "hero-athlete-layer"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "hero-ground-line",
+							"aria-hidden": "true"
+						})]
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					ref: copyRef,
-					className: "hero-copy container-x relative z-20 grid shrink-0 gap-8 bg-background pb-8 pt-6 lg:mt-auto lg:bg-transparent lg:pb-14 lg:pt-32 lg:grid-cols-[1fr_auto] lg:items-end lg:pb-14",
+					className: "hero-copy container-x relative z-30 mt-auto grid shrink-0 gap-8 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 md:grid-cols-[1fr_auto] md:items-end md:gap-6",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "max-w-md",
 						children: [
@@ -1783,6 +2067,63 @@ function Packages() {
 		})
 	});
 }
+var PRESETS = {
+	nav: {
+		scale: 28,
+		aberration: 6,
+		bevelDepth: 16,
+		frost: .35,
+		tint: .06,
+		radius: 9999
+	},
+	panel: {
+		scale: 34,
+		aberration: 9,
+		bevelDepth: 20,
+		frost: .38,
+		tint: .09,
+		radius: 0
+	},
+	card: {
+		scale: 26,
+		aberration: 5,
+		bevelDepth: 14,
+		frost: .32,
+		tint: .08,
+		radius: 16
+	},
+	strong: {
+		scale: 38,
+		aberration: 11,
+		bevelDepth: 24,
+		frost: .42,
+		tint: .1,
+		radius: 0
+	}
+};
+var surfaceStyles = "pointer-events-none absolute inset-0 border border-[color:var(--glass-border)] shadow-[var(--glass-shadow),inset_0_1px_0_var(--glass-highlight)]";
+/** LiquidGlass refractor behind content — use instead of `.glass` where refraction helps. */
+function SiteGlassShell({ variant = "card", className, surfaceClassName, contentClassName, children, radius, scale, aberration, bevelDepth, frost, tint, ...shellRest }) {
+	const preset = PRESETS[variant];
+	const resolvedRadius = radius ?? preset.radius;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: cn("site-glass-shell relative isolate", className),
+		...shellRest,
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LiquidGlass, {
+			scale: scale ?? preset.scale,
+			aberration: aberration ?? preset.aberration,
+			bevelDepth: bevelDepth ?? preset.bevelDepth,
+			frost: frost ?? preset.frost,
+			tint: tint ?? preset.tint,
+			radius: resolvedRadius,
+			"aria-hidden": true,
+			className: cn(surfaceStyles, variant === "nav" && "rounded-[inherit]", surfaceClassName)
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: cn("relative z-[1]", contentClassName),
+			children
+		})]
+	});
+}
 var images = {
 	dumbbells: "/assets/p-dumbbells-D0LafSYU.jpg",
 	kettlebell: "/assets/p-kettlebell-Bo_mp1uI.jpg",
@@ -1793,38 +2134,44 @@ var images = {
 };
 function ProductCard({ p }) {
 	const { add } = useCart();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("article", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("article", {
 		...tiltHandlers(7),
-		className: "tilt shop-product-card flex flex-col overflow-hidden rounded-xl",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-			src: images[p.image],
-			alt: p.name,
-			loading: "lazy",
-			width: 816,
-			height: 816,
-			className: "shop-product-media aspect-square w-full object-cover"
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "shop-product-body flex flex-1 items-end justify-between gap-4 p-5 sm:p-6",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-					className: "text-lg font-bold",
-					children: p.name
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "text-sm text-muted-foreground",
-					children: p.detail
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "mt-2 text-xl font-bold",
-					children: money(p.price)
-				})
-			] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-				className: "btn btn-primary btn-icon shrink-0",
-				onClick: () => add(p.id),
-				"aria-label": `Add ${p.name} to cart`,
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "size-5" })
+		className: "tilt shop-product-card relative overflow-hidden rounded-xl",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SiteGlassShell, {
+			variant: "card",
+			radius: 14,
+			className: "size-full",
+			contentClassName: "flex h-full flex-col",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+				src: images[p.image],
+				alt: p.name,
+				loading: "lazy",
+				width: 816,
+				height: 816,
+				className: "shop-product-media relative z-[2] aspect-square w-full object-cover"
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "shop-product-body relative z-[2] flex flex-1 items-end justify-between gap-4 p-5 sm:p-6",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						className: "text-lg font-bold",
+						children: p.name
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-sm text-muted-foreground",
+						children: p.detail
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "mt-2 text-xl font-bold",
+						children: money(p.price)
+					})
+				] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					className: "btn btn-primary btn-icon shrink-0",
+					onClick: () => add(p.id),
+					"aria-label": `Add ${p.name} to cart`,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "size-5" })
+				})]
 			})]
-		})]
+		})
 	});
 }
 function Shop() {
@@ -1944,10 +2291,13 @@ function Testimonials() {
 					direction: "top",
 					delay: 50
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("figure", {
-					className: "glass max-w-4xl rounded-2xl p-6 sm:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500",
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SiteGlassShell, {
+					variant: "card",
+					radius: 20,
+					className: "max-w-4xl animate-in fade-in slide-in-from-bottom-4 rounded-2xl duration-500",
+					contentClassName: "p-6 sm:p-10",
 					"aria-live": "polite",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("blockquote", {
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("figure", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("blockquote", {
 						className: "text-[length:clamp(1.6rem,3.6vw,3rem)] font-bold leading-tight",
 						children: [
 							"\"",
@@ -1963,7 +2313,7 @@ function Testimonials() {
 							className: "text-muted-foreground",
 							children: [" · ", t.role]
 						})]
-					})]
+					})] })
 				}, i),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "mt-12 flex items-center gap-3",
@@ -2075,8 +2425,10 @@ function Contact() {
 					className: "btn btn-primary mt-8",
 					children: "See plans"
 				})
-			] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "glass rounded-xl p-6 md:p-10",
+			] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SiteGlassShell, {
+				variant: "card",
+				className: "rounded-xl",
+				contentClassName: "p-6 md:p-10",
 				children: status === "sent" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					role: "status",
 					className: "flex min-h-80 flex-col justify-center",
@@ -2159,29 +2511,34 @@ function Footer() {
 						direction: "top",
 						delay: 45
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
-						onSubmit,
-						noValidate: true,
-						className: "glass mt-6 flex max-w-md flex-col gap-3 rounded-xl p-4 sm:flex-row sm:items-center sm:p-3",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
-								htmlFor: "nl-email",
-								className: "sr-only",
-								children: "Email address"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-								id: "nl-email",
-								name: "email",
-								type: "email",
-								placeholder: "you@email.com",
-								className: "field"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								className: "btn btn-primary shrink-0",
-								disabled: state === "sending",
-								children: state === "sending" ? "Joining..." : "Subscribe"
-							})
-						]
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SiteGlassShell, {
+						variant: "card",
+						className: "mt-6 max-w-md rounded-xl",
+						contentClassName: "flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:p-3",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+							onSubmit,
+							noValidate: true,
+							className: "contents",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+									htmlFor: "nl-email",
+									className: "sr-only",
+									children: "Email address"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									id: "nl-email",
+									name: "email",
+									type: "email",
+									placeholder: "you@email.com",
+									className: "field min-w-0 flex-1"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									className: "btn btn-primary shrink-0",
+									disabled: state === "sending",
+									children: state === "sending" ? "Joining..." : "Subscribe"
+								})
+							]
+						})
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 						className: "mt-3 min-h-6 text-sm",
@@ -2312,94 +2669,102 @@ function CartDrawer() {
 			"aria-label": "Close cart",
 			tabIndex: -1,
 			onClick: () => setOpen(false)
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			ref: panel,
 			role: "dialog",
 			"aria-modal": "true",
 			"aria-label": "Your cart",
-			className: "glass glass-strong safe-bottom absolute inset-y-0 right-0 flex w-full max-w-[min(100%,28rem)] flex-col p-6 animate-in slide-in-from-right duration-300 md:p-8",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex items-center justify-between",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-					className: "text-2xl font-extrabold",
-					children: "Your cart"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					className: "btn btn-on-surface btn-icon",
-					onClick: () => setOpen(false),
-					"aria-label": "Close cart",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { className: "size-5" })
-				})]
-			}), lines.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex flex-1 flex-col items-start justify-center gap-6",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "text-muted-foreground",
-					children: "Your cart is empty."
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-					href: "#shop",
-					className: "btn btn-primary",
-					onClick: () => setOpen(false),
-					children: "Browse gear"
-				})]
-			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-				className: "mt-8 flex flex-1 flex-col gap-3 overflow-y-auto",
-				children: lines.map((l) => {
-					const item = catalog[l.id];
-					if (!item) return null;
-					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-						className: "glass flex flex-col gap-3 rounded-lg p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							className: "font-bold",
-							children: item.name
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-							className: "text-sm text-muted-foreground",
-							children: [money(item.price), item.kind === "package" ? " / month" : ""]
-						})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									className: "btn btn-secondary btn-icon size-9 min-h-9",
-									onClick: () => update(l.id, l.qty - 1),
-									"aria-label": `Remove one ${item.name}`,
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Minus, { className: "size-4" })
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "w-6 text-center font-bold",
-									"aria-label": "Quantity",
-									children: l.qty
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									className: "btn btn-secondary btn-icon size-9 min-h-9",
-									onClick: () => update(l.id, l.qty + 1),
-									disabled: item.kind === "package",
-									"aria-label": `Add one ${item.name}`,
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "size-4" })
-								})
-							]
-						})]
-					}, l.id);
-				})
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "mt-6",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex justify-between text-lg",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Subtotal" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "font-bold",
-							children: money(total)
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						className: "btn btn-primary mt-5 w-full",
-						onClick: () => setNote(true),
-						children: "Checkout"
-					}),
-					note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "mt-3 text-sm text-muted-foreground",
-						role: "status",
-						children: "Online checkout opens soon. Use the contact form to order now."
+			className: "safe-bottom absolute inset-y-0 right-0 w-full max-w-[min(100%,28rem)] animate-in slide-in-from-right duration-300",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SiteGlassShell, {
+				variant: "strong",
+				className: "size-full",
+				contentClassName: "flex h-full flex-col p-6 md:p-8",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-center justify-between",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+						className: "text-2xl font-extrabold",
+						children: "Your cart"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						className: "btn btn-on-surface btn-icon",
+						onClick: () => setOpen(false),
+						"aria-label": "Close cart",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { className: "size-5" })
+					})]
+				}), lines.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex flex-1 flex-col items-start justify-center gap-6",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-muted-foreground",
+						children: "Your cart is empty."
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+						href: "#shop",
+						className: "btn btn-primary",
+						onClick: () => setOpen(false),
+						children: "Browse gear"
+					})]
+				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+					className: "mt-8 flex flex-1 flex-col gap-3 overflow-y-auto",
+					children: lines.map((l) => {
+						const item = catalog[l.id];
+						if (!item) return null;
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SiteGlassShell, {
+							variant: "card",
+							radius: 12,
+							className: "rounded-lg",
+							contentClassName: "flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "font-bold",
+								children: item.name
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+								className: "text-sm text-muted-foreground",
+								children: [money(item.price), item.kind === "package" ? " / month" : ""]
+							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex items-center gap-2",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+										className: "btn btn-secondary btn-icon size-9 min-h-9",
+										onClick: () => update(l.id, l.qty - 1),
+										"aria-label": `Remove one ${item.name}`,
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Minus, { className: "size-4" })
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "w-6 text-center font-bold",
+										"aria-label": "Quantity",
+										children: l.qty
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+										className: "btn btn-secondary btn-icon size-9 min-h-9",
+										onClick: () => update(l.id, l.qty + 1),
+										disabled: item.kind === "package",
+										"aria-label": `Add one ${item.name}`,
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { className: "size-4" })
+									})
+								]
+							})]
+						}) }, l.id);
 					})
-				]
-			})] })]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-6",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex justify-between text-lg",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Subtotal" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "font-bold",
+								children: money(total)
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							className: "btn btn-primary mt-5 w-full",
+							onClick: () => setNote(true),
+							children: "Checkout"
+						}),
+						note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "mt-3 text-sm text-muted-foreground",
+							role: "status",
+							children: "Online checkout opens soon. Use the contact form to order now."
+						})
+					]
+				})] })]
+			})
 		})]
 	});
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Menu, Moon, ShoppingBag, Sun, X } from "lucide-react";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useCart } from "@/lib/cart";
 
 const links = [
@@ -43,6 +44,8 @@ export function Navbar() {
   }, [menu]);
 
   const closeMenu = () => setMenu(false);
+  const showNavGlass = scrolled || menu;
+  const navGlassRadius = menu ? 20 : 9999;
 
   return (
     <header className="nav-header safe-top">
@@ -51,7 +54,19 @@ export function Navbar() {
         data-scrolled={scrolled || undefined}
         data-menu-open={menu || undefined}
       >
-        <nav className="nav-bar" aria-label="Main">
+        {showNavGlass ? (
+          <LiquidGlass
+            radius={navGlassRadius}
+            scale={28}
+            aberration={6}
+            bevelDepth={16}
+            frost={0.35}
+            tint={0.06}
+            aria-hidden
+            className="nav-liquid-glass pointer-events-none absolute inset-0 rounded-[inherit] border border-[color:var(--glass-border)] shadow-[var(--glass-shadow),inset_0_1px_0_var(--glass-highlight)]"
+          />
+        ) : null}
+        <nav className="nav-bar relative z-[2]" aria-label="Main">
           <a href="#top" className="navbar-logo" aria-label="JODLEM home">
             <span className="navbar-logo-text condensed font-black uppercase">JODLEM</span>
           </a>
@@ -109,7 +124,7 @@ export function Navbar() {
 
         <div
           id="nav-mobile-panel"
-          className="nav-mobile-panel md:hidden"
+          className="nav-mobile-panel relative z-[2] md:hidden"
           role="region"
           aria-label="Mobile navigation"
           aria-hidden={!menu}

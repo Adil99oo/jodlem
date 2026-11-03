@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import site from "@/data/site.json";
 import { useReveal } from "@/lib/motion";
+import { SiteGlassShell } from "@/components/ui/site-glass-shell";
 import { StaggeredText } from "@/components/ui/staggered-text";
 
 export function Testimonials() {
@@ -37,13 +38,22 @@ export function Testimonials() {
           direction="top"
           delay={50}
         />
-        <figure key={i} className="glass max-w-4xl rounded-2xl p-6 sm:p-10 animate-in fade-in slide-in-from-bottom-4 duration-500" aria-live="polite">
-          <blockquote className="text-[length:clamp(1.6rem,3.6vw,3rem)] font-bold leading-tight">"{t.quote}"</blockquote>
-          <figcaption className="mt-8">
-            <span className="font-bold">{t.name}</span>
-            <span className="text-muted-foreground"> · {t.role}</span>
-          </figcaption>
-        </figure>
+        <SiteGlassShell
+          key={i}
+          variant="card"
+          radius={20}
+          className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 rounded-2xl duration-500"
+          contentClassName="p-6 sm:p-10"
+          aria-live="polite"
+        >
+          <figure>
+            <blockquote className="text-[length:clamp(1.6rem,3.6vw,3rem)] font-bold leading-tight">"{t.quote}"</blockquote>
+            <figcaption className="mt-8">
+              <span className="font-bold">{t.name}</span>
+              <span className="text-muted-foreground"> · {t.role}</span>
+            </figcaption>
+          </figure>
+        </SiteGlassShell>
         <div className="mt-12 flex items-center gap-3">
           <button className="btn btn-on-surface btn-icon" onClick={() => go(-1)} aria-label="Previous testimonial"><ArrowLeft className="size-5" /></button>
           <button className="btn btn-on-surface btn-icon" onClick={() => go(1)} aria-label="Next testimonial"><ArrowRight className="size-5" /></button>

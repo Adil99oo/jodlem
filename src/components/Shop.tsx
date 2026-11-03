@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import products from "@/data/products.json";
 import { money, useCart } from "@/lib/cart";
 import { tiltHandlers, useReveal } from "@/lib/motion";
+import { SiteGlassShell } from "@/components/ui/site-glass-shell";
 import { StaggeredText } from "@/components/ui/staggered-text";
 import dumbbells from "@/assets/p-dumbbells.jpg";
 import kettlebell from "@/assets/p-kettlebell.jpg";
@@ -16,25 +17,27 @@ const images: Record<string, string> = { dumbbells, kettlebell, bands, mat, rope
 function ProductCard({ p }: { p: (typeof products)[number] }) {
   const { add } = useCart();
   return (
-    <article {...tiltHandlers(7)} className="tilt shop-product-card flex flex-col overflow-hidden rounded-xl">
-      <img
-        src={images[p.image]}
-        alt={p.name}
-        loading="lazy"
-        width={816}
-        height={816}
-        className="shop-product-media aspect-square w-full object-cover"
-      />
-      <div className="shop-product-body flex flex-1 items-end justify-between gap-4 p-5 sm:p-6">
-        <div>
-          <h3 className="text-lg font-bold">{p.name}</h3>
-          <p className="text-sm text-muted-foreground">{p.detail}</p>
-          <p className="mt-2 text-xl font-bold">{money(p.price)}</p>
+    <article {...tiltHandlers(7)} className="tilt shop-product-card relative overflow-hidden rounded-xl">
+      <SiteGlassShell variant="card" radius={14} className="size-full" contentClassName="flex h-full flex-col">
+        <img
+          src={images[p.image]}
+          alt={p.name}
+          loading="lazy"
+          width={816}
+          height={816}
+          className="shop-product-media relative z-[2] aspect-square w-full object-cover"
+        />
+        <div className="shop-product-body relative z-[2] flex flex-1 items-end justify-between gap-4 p-5 sm:p-6">
+          <div>
+            <h3 className="text-lg font-bold">{p.name}</h3>
+            <p className="text-sm text-muted-foreground">{p.detail}</p>
+            <p className="mt-2 text-xl font-bold">{money(p.price)}</p>
+          </div>
+          <button className="btn btn-primary btn-icon shrink-0" onClick={() => add(p.id)} aria-label={`Add ${p.name} to cart`}>
+            <Plus className="size-5" />
+          </button>
         </div>
-        <button className="btn btn-primary btn-icon shrink-0" onClick={() => add(p.id)} aria-label={`Add ${p.name} to cart`}>
-          <Plus className="size-5" />
-        </button>
-      </div>
+      </SiteGlassShell>
     </article>
   );
 }

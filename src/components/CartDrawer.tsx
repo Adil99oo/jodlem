@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Minus, Plus, X } from "lucide-react";
+import { SiteGlassShell } from "@/components/ui/site-glass-shell";
 import { catalog, money, useCart } from "@/lib/cart";
 
 export function CartDrawer() {
@@ -32,8 +33,14 @@ export function CartDrawer() {
   return (
     <div className="fixed inset-0 z-50">
       <button className="glass-overlay absolute inset-0 h-full w-full cursor-default" aria-label="Close cart" tabIndex={-1} onClick={() => setOpen(false)} />
-      <div ref={panel} role="dialog" aria-modal="true" aria-label="Your cart"
-        className="glass glass-strong safe-bottom absolute inset-y-0 right-0 flex w-full max-w-[min(100%,28rem)] flex-col p-6 animate-in slide-in-from-right duration-300 md:p-8">
+      <div
+        ref={panel}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Your cart"
+        className="safe-bottom absolute inset-y-0 right-0 w-full max-w-[min(100%,28rem)] animate-in slide-in-from-right duration-300"
+      >
+        <SiteGlassShell variant="strong" className="size-full" contentClassName="flex h-full flex-col p-6 md:p-8">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-extrabold">Your cart</h2>
           <button className="btn btn-on-surface btn-icon" onClick={() => setOpen(false)} aria-label="Close cart"><X className="size-5" /></button>
@@ -51,7 +58,13 @@ export function CartDrawer() {
                 const item = catalog[l.id];
                 if (!item) return null;
                 return (
-                  <li key={l.id} className="glass flex flex-col gap-3 rounded-lg p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <li key={l.id}>
+                    <SiteGlassShell
+                      variant="card"
+                      radius={12}
+                      className="rounded-lg"
+                      contentClassName="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                    >
                     <div>
                       <p className="font-bold">{item.name}</p>
                       <p className="text-sm text-muted-foreground">{money(item.price)}{item.kind === "package" ? " / month" : ""}</p>
@@ -61,6 +74,7 @@ export function CartDrawer() {
                       <span className="w-6 text-center font-bold" aria-label="Quantity">{l.qty}</span>
                       <button className="btn btn-secondary btn-icon size-9 min-h-9" onClick={() => update(l.id, l.qty + 1)} disabled={item.kind === "package"} aria-label={`Add one ${item.name}`}><Plus className="size-4" /></button>
                     </div>
+                    </SiteGlassShell>
                   </li>
                 );
               })}
@@ -72,6 +86,7 @@ export function CartDrawer() {
             </div>
           </>
         )}
+        </SiteGlassShell>
       </div>
     </div>
   );

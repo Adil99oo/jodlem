@@ -541,6 +541,8 @@
   }
 
   .nav-shell {
+    position: relative;
+    overflow: hidden;
     pointer-events: auto;
     margin-inline: auto;
     max-width: 100%;
@@ -562,21 +564,25 @@
   .nav-shell[data-scrolled] {
     max-width: 56rem;
     border-radius: 9999px;
-    background: var(--glass-bg);
+    background: transparent;
     border-color: var(--glass-border);
     box-shadow: var(--glass-shadow), 0 12px 40px oklch(0 0 0 / 0.18);
-    backdrop-filter: blur(20px) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(20px) saturate(var(--glass-saturate));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     transform: translateY(4px) scale(0.985);
   }
 
   .nav-shell[data-menu-open] {
     border-radius: 1.25rem;
-    background: var(--glass-bg-strong);
+    background: transparent;
     border-color: var(--glass-border);
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(24px) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(24px) saturate(var(--glass-saturate));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nav-liquid-glass {
+    border-radius: inherit;
   }
 
   .nav-bar {

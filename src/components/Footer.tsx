@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { SiteGlassShell } from "@/components/ui/site-glass-shell";
 import { StaggeredText } from "@/components/ui/staggered-text";
 
 const emailSchema = z.string().trim().email().max(255);
@@ -34,11 +35,13 @@ export function Footer() {
               direction="top"
               delay={45}
             />
-            <form onSubmit={onSubmit} noValidate className="glass mt-6 flex max-w-md flex-col gap-3 rounded-xl p-4 sm:flex-row sm:items-center sm:p-3">
-              <label htmlFor="nl-email" className="sr-only">Email address</label>
-              <input id="nl-email" name="email" type="email" placeholder="you@email.com" className="field" />
-              <button className="btn btn-primary shrink-0" disabled={state === "sending"}>{state === "sending" ? "Joining..." : "Subscribe"}</button>
-            </form>
+            <SiteGlassShell variant="card" className="mt-6 max-w-md rounded-xl" contentClassName="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:p-3">
+              <form onSubmit={onSubmit} noValidate className="contents">
+                <label htmlFor="nl-email" className="sr-only">Email address</label>
+                <input id="nl-email" name="email" type="email" placeholder="you@email.com" className="field min-w-0 flex-1" />
+                <button className="btn btn-primary shrink-0" disabled={state === "sending"}>{state === "sending" ? "Joining..." : "Subscribe"}</button>
+              </form>
+            </SiteGlassShell>
             <p className="mt-3 min-h-6 text-sm" role="status">
               {state === "done" && <span className="text-accent">You're on the list.</span>}
               {state === "invalid" && <span className="text-destructive">Enter a valid email address.</span>}
